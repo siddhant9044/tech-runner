@@ -1,1 +1,831 @@
-.leaderboard-page{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;background:url('/assets/backgrounds/cyber-background.png') center/cover fixed;position:relative}.leaderboard-page:before{content:'';position:absolute;inset:0;background:rgba(2,9,16,.88)}.leaderboard-page>*{position:relative}.lb-main{min-width:0}.lb-head{display:flex;justify-content:space-between;align-items:center;border:1px solid #1a5b7f;background:rgba(4,17,29,.94);padding:24px}.lb-head h1{font-size:36px;margin:8px 0;display:flex;gap:12px;align-items:center}.lb-head h1 svg{color:#39c7ff}.lb-head p{margin:0;color:#82a4b8}.live{border:1px solid #1b79a6;padding:14px 20px;color:#44caff;font-weight:800;font-size:11px;text-align:center}.live small{color:#7695a7;font-size:8px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}.filters select,.filter-time{height:44px;background:#061521;border:1px solid #1b6086;color:#a9c5d5;padding:0 16px}.table-wrap{overflow:auto;background:#04111d;border:1px solid #1b5878}.table-wrap table{width:100%;min-width:1040px;border-collapse:collapse;font-size:12px}.table-wrap th{height:54px;background:#071c2d;color:#62cbf7;text-transform:uppercase;letter-spacing:.08em;font-size:10px}.table-wrap td{padding:11px 10px;border-top:1px solid #102c3f;text-align:center;white-space:nowrap}.table-wrap td:nth-child(2),.table-wrap td:nth-child(3){text-align:left}.table-wrap tr.mine{background:#0b2030}.table-wrap tr:hover{background:#0a1d2c}.medal{display:inline-flex}.m1{color:#ffd24a}.m2{color:#cdd8e2}.m3{color:#eaa36e}.empty{padding:40px!important;color:#6e8fa2}.pagination{display:flex;justify-content:center;align-items:center;gap:18px;padding:16px}.pagination button{background:#082037;color:#8fdcff;border:1px solid #216f9a;width:40px;height:36px;cursor:pointer}.pagination button:disabled{opacity:.35}.pagination span{font-size:10px;letter-spacing:.16em;color:#7897a8}.my-stats{align-self:start;padding:22px;margin-top:0;background:rgba(4,17,29,.94)}.my-rank{display:flex;justify-content:space-between;padding:18px 0;border-bottom:1px solid #17394e;color:#91afbf}.my-rank b{font-size:24px;color:#fff}.my-stats h3{font-size:10px;color:#38c7ff;letter-spacing:.16em;margin:22px 0 10px}.break{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #112e40;color:#82a3b5;font-size:12px}.break b{color:#eef7ff}.quote{margin-top:25px;color:#37c8ff;line-height:1.6;font-size:12px;font-weight:800;letter-spacing:.08em}.lb-error{font-size:11px;color:#ff8d99}@media(max-width:1050px){.leaderboard-page{grid-template-columns:1fr}.my-stats{order:-1}.my-stats .break,.my-stats h3,.my-stats .quote{display:none}.my-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.my-stats>.section-title{grid-column:1/-1}.my-rank{border:1px solid #17394e;padding:10px 12px}.lb-head{align-items:flex-start}}@media(max-width:650px){.lb-head h1{font-size:25px}.live{display:none}.filters{grid-template-columns:1fr}.leaderboard-page{padding:20px 10px}}
+/* .leaderboard-page{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;background:url('/assets/backgrounds/cyber-background.png') center/cover fixed;position:relative}.leaderboard-page:before{content:'';position:absolute;inset:0;background:rgba(2,9,16,.88)}.leaderboard-page>*{position:relative}.lb-main{min-width:0}.lb-head{display:flex;justify-content:space-between;align-items:center;border:1px solid #1a5b7f;background:rgba(4,17,29,.94);padding:24px}.lb-head h1{font-size:36px;margin:8px 0;display:flex;gap:12px;align-items:center}.lb-head h1 svg{color:#39c7ff}.lb-head p{margin:0;color:#82a4b8}.live{border:1px solid #1b79a6;padding:14px 20px;color:#44caff;font-weight:800;font-size:11px;text-align:center}.live small{color:#7695a7;font-size:8px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}.filters select,.filter-time{height:44px;background:#061521;border:1px solid #1b6086;color:#a9c5d5;padding:0 16px}.table-wrap{overflow:auto;background:#04111d;border:1px solid #1b5878}.table-wrap table{width:100%;min-width:1040px;border-collapse:collapse;font-size:12px}.table-wrap th{height:54px;background:#071c2d;color:#62cbf7;text-transform:uppercase;letter-spacing:.08em;font-size:10px}.table-wrap td{padding:11px 10px;border-top:1px solid #102c3f;text-align:center;white-space:nowrap}.table-wrap td:nth-child(2),.table-wrap td:nth-child(3){text-align:left}.table-wrap tr.mine{background:#0b2030}.table-wrap tr:hover{background:#0a1d2c}.medal{display:inline-flex}.m1{color:#ffd24a}.m2{color:#cdd8e2}.m3{color:#eaa36e}.empty{padding:40px!important;color:#6e8fa2}.pagination{display:flex;justify-content:center;align-items:center;gap:18px;padding:16px}.pagination button{background:#082037;color:#8fdcff;border:1px solid #216f9a;width:40px;height:36px;cursor:pointer}.pagination button:disabled{opacity:.35}.pagination span{font-size:10px;letter-spacing:.16em;color:#7897a8}.my-stats{align-self:start;padding:22px;margin-top:0;background:rgba(4,17,29,.94)}.my-rank{display:flex;justify-content:space-between;padding:18px 0;border-bottom:1px solid #17394e;color:#91afbf}.my-rank b{font-size:24px;color:#fff}.my-stats h3{font-size:10px;color:#38c7ff;letter-spacing:.16em;margin:22px 0 10px}.break{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #112e40;color:#82a3b5;font-size:12px}.break b{color:#eef7ff}.quote{margin-top:25px;color:#37c8ff;line-height:1.6;font-size:12px;font-weight:800;letter-spacing:.08em}.lb-error{font-size:11px;color:#ff8d99}@media(max-width:1050px){.leaderboard-page{grid-template-columns:1fr}.my-stats{order:-1}.my-stats .break,.my-stats h3,.my-stats .quote{display:none}.my-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.my-stats>.section-title{grid-column:1/-1}.my-rank{border:1px solid #17394e;padding:10px 12px}.lb-head{align-items:flex-start}}@media(max-width:650px){.lb-head h1{font-size:25px}.live{display:none}.filters{grid-template-columns:1fr}.leaderboard-page{padding:20px 10px}} */
+/* =========================================================
+   LEADERBOARD PAGE
+========================================================= */
+
+.leaderboard-page {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    300px;
+
+  gap: 20px;
+
+  background:
+    url('/assets/backgrounds/cyber-background.png')
+    center / cover fixed no-repeat;
+}
+
+.leaderboard-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    rgba(2, 9, 16, 0.89);
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+.leaderboard-page > * {
+  position: relative;
+
+  z-index: 1;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.lb-main {
+  min-width: 0;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.lb-head {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  border:
+    1px solid #1a5b7f;
+
+  background:
+    rgba(4, 17, 29, 0.94);
+
+  padding: 24px;
+}
+
+.lb-heading {
+  min-width: 0;
+}
+
+.lb-head h1 {
+  font-size:
+    clamp(
+      28px,
+      4vw,
+      38px
+    );
+
+  margin:
+    8px 0;
+
+  display: flex;
+
+  gap: 12px;
+
+  align-items: center;
+
+  line-height: 1.1;
+}
+
+.lb-head h1 svg {
+  color: #39c7ff;
+
+  flex: 0 0 auto;
+}
+
+.lb-head p {
+  margin: 0;
+
+  color: #82a4b8;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   LIVE STATUS
+========================================================= */
+
+.live {
+  border:
+    1px solid #1b79a6;
+
+  padding:
+    13px 17px;
+
+  color: #44caff;
+
+  font-weight: 800;
+
+  font-size: 10px;
+
+  text-align: center;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  flex: 0 0 auto;
+}
+
+.live span {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.live small {
+  color: #7695a7;
+
+  font-size: 7px;
+}
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.filters {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 14px;
+
+  margin:
+    14px 0;
+}
+
+.filters label {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.filters label > span,
+.filter-time > span {
+  color: #5e8ca4;
+
+  font-size: 8px;
+
+  letter-spacing:
+    0.14em;
+
+  font-weight: 800;
+}
+
+.filters select,
+.filter-time {
+  height: 44px;
+
+  background: #061521;
+
+  border:
+    1px solid #1b6086;
+
+  color: #a9c5d5;
+
+  padding:
+    0 16px;
+
+  outline: none;
+}
+
+.filters select {
+  width: 100%;
+
+  cursor: pointer;
+}
+
+.filters select:focus {
+  border-color:
+    #43caff;
+}
+
+.filter-time {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.filter-time b {
+  color: #c7dce8;
+
+  font-size: 10px;
+
+  letter-spacing:
+    0.12em;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.lb-error {
+  margin:
+    0 0 12px;
+
+  padding:
+    10px 12px;
+
+  border-left:
+    3px solid #ff4354;
+
+  background:
+    rgba(66, 13, 22, 0.75);
+
+  color: #ff9aa3;
+
+  font-size: 11px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.lb-error button {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  border:
+    1px solid #8f2e3a;
+
+  background:
+    transparent;
+
+  color: #ffb5bc;
+
+  padding:
+    6px 9px;
+
+  font-size: 8px;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   TABLE HINT
+========================================================= */
+
+.table-hint {
+  display: none;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap {
+  width: 100%;
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  -webkit-overflow-scrolling: touch;
+
+  background: #04111d;
+
+  border:
+    1px solid #1b5878;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    #277ca5
+    #071725;
+}
+
+.table-wrap table {
+  width: 100%;
+
+  min-width: 1040px;
+
+  border-collapse: collapse;
+
+  font-size: 12px;
+}
+
+.table-wrap th {
+  height: 54px;
+
+  padding:
+    0 10px;
+
+  background: #071c2d;
+
+  color: #62cbf7;
+
+  text-transform: uppercase;
+
+  letter-spacing:
+    0.08em;
+
+  font-size: 10px;
+
+  white-space: nowrap;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 2;
+}
+
+.table-wrap td {
+  padding:
+    11px 10px;
+
+  border-top:
+    1px solid #102c3f;
+
+  text-align: center;
+
+  white-space: nowrap;
+
+  color: #b0c5d1;
+}
+
+.table-wrap td:nth-child(2),
+.table-wrap td:nth-child(3) {
+  text-align: left;
+}
+
+.table-wrap tr.mine {
+  background:
+    rgba(11, 32, 48, 0.95);
+}
+
+.table-wrap tr:hover {
+  background:
+    #0a1d2c;
+}
+
+.player-cell b {
+  color: #eef7ff;
+}
+
+.branch-cell {
+  color: #86a9bb !important;
+}
+
+.score-cell strong {
+  color: #ffffff;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   MEDALS
+========================================================= */
+
+.medal {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.m1 {
+  color: #ffd24a;
+}
+
+.m2 {
+  color: #cdd8e2;
+}
+
+.m3 {
+  color: #eaa36e;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty {
+  padding:
+    40px !important;
+
+  color: #6e8fa2 !important;
+
+  text-align: center !important;
+
+  letter-spacing:
+    0.12em;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 18px;
+
+  padding:
+    16px 0;
+}
+
+.pagination button {
+  display: grid;
+
+  place-items: center;
+
+  background: #082037;
+
+  color: #8fdcff;
+
+  border:
+    1px solid #216f9a;
+
+  width: 40px;
+
+  height: 36px;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+}
+
+.pagination button svg {
+  width: 17px;
+}
+
+.pagination button:disabled {
+  opacity: 0.35;
+
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 10px;
+
+  letter-spacing:
+    0.16em;
+
+  color: #7897a8;
+}
+
+/* =========================================================
+   MY STATS
+========================================================= */
+
+.my-stats {
+  align-self: start;
+
+  padding: 22px;
+
+  background:
+    rgba(4, 17, 29, 0.94);
+}
+
+.my-rank {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding:
+    18px 0;
+
+  border-bottom:
+    1px solid #17394e;
+
+  color: #91afbf;
+}
+
+.my-rank b {
+  font-size: 24px;
+
+  color: #fff;
+}
+
+.my-stats h3 {
+  font-size: 10px;
+
+  color: #38c7ff;
+
+  letter-spacing:
+    0.16em;
+
+  margin:
+    22px 0 10px;
+}
+
+.break {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding:
+    10px 0;
+
+  border-bottom:
+    1px solid #112e40;
+
+  color: #82a3b5;
+
+  font-size: 12px;
+}
+
+.break b {
+  color: #eef7ff;
+}
+
+.quote {
+  margin-top: 25px;
+
+  color: #37c8ff;
+
+  line-height: 1.6;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.08em;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+  .leaderboard-page {
+    grid-template-columns: 1fr;
+  }
+
+  .my-stats {
+    order: -1;
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .my-stats
+  > .section-title {
+    grid-column:
+      1 / -1;
+  }
+
+  .my-stats h3,
+  .my-stats .break,
+  .my-stats .quote {
+    display: none;
+  }
+
+  .my-rank {
+    border:
+      1px solid #17394e;
+
+    padding:
+      11px 13px;
+  }
+
+  .lb-head {
+    align-items:
+      flex-start;
+  }
+}
+
+/* =========================================================
+   MOBILE LANDSCAPE
+========================================================= */
+
+@media (
+  max-width: 850px
+) and (
+  orientation: landscape
+) {
+  .leaderboard-page {
+    padding:
+      18px 12px;
+  }
+
+  .lb-head {
+    padding: 17px;
+  }
+
+  .lb-head h1 {
+    font-size: 25px;
+  }
+
+  .lb-head p {
+    font-size: 10px;
+  }
+
+  .my-stats {
+    display: none;
+  }
+
+  .table-wrap table {
+    min-width: 1040px;
+  }
+}
+
+/* =========================================================
+   PORTRAIT MOBILE
+========================================================= */
+
+@media (orientation: portrait) {
+  .leaderboard-page {
+    min-height: 100dvh;
+
+    padding:
+      18px 10px;
+
+    background-attachment:
+      scroll;
+  }
+
+  .lb-head {
+    padding:
+      17px 14px;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 14px;
+  }
+
+  .lb-head h1 {
+    font-size:
+      clamp(
+        24px,
+        7vw,
+        31px
+      );
+
+    gap: 8px;
+  }
+
+  .lb-head h1 svg {
+    width: 23px;
+  }
+
+  .lb-head p {
+    font-size: 11px;
+
+    line-height: 1.5;
+  }
+
+  .live {
+    width: 100%;
+
+    justify-content:
+      center;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+
+    gap: 9px;
+  }
+
+  .filter-time {
+    height: 42px;
+  }
+
+  /*
+   * Important:
+   * We intentionally keep the complete leaderboard
+   * table. On a narrow phone it becomes horizontally
+   * scrollable instead of crushing all 11 columns.
+   */
+  .table-hint {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding:
+      8px 2px;
+
+    color: #56839a;
+
+    font-size: 7px;
+
+    letter-spacing:
+      0.14em;
+  }
+
+  .table-wrap {
+    border-radius: 0;
+
+    touch-action: pan-x;
+  }
+
+  .table-wrap table {
+    min-width: 1040px;
+  }
+
+  .table-wrap th {
+    height: 48px;
+
+    font-size: 8px;
+  }
+
+  .table-wrap td {
+    padding:
+      10px 9px;
+
+    font-size: 11px;
+  }
+
+  .my-stats {
+    grid-template-columns:
+      1fr 1fr;
+
+    padding:
+      15px;
+
+    margin-bottom: 12px;
+  }
+
+  .my-rank {
+    padding:
+      10px 11px;
+  }
+
+  .my-rank span {
+    font-size: 10px;
+  }
+
+  .my-rank b {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (
+  orientation: portrait
+) and (
+  max-width: 390px
+) {
+  .leaderboard-page {
+    padding:
+      14px 8px;
+  }
+
+  .lb-head {
+    padding:
+      14px 11px;
+  }
+
+  .lb-head h1 {
+    font-size: 23px;
+  }
+
+  .my-stats {
+    gap: 7px;
+  }
+
+  .my-rank {
+    padding:
+      9px;
+  }
+
+  .table-hint {
+    font-size: 6px;
+  }
+}

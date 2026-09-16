@@ -1,1 +1,105 @@
-*{box-sizing:border-box}html,body,#root{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;background:#020a12;color:#edf7ff}body{overflow-x:hidden}button,input,select{font:inherit}button{font-family:inherit}.boot-screen{min-height:100vh;display:grid;place-items:center;background:#020a12;color:#45c7ff;letter-spacing:.16em;font-weight:800}
+/* *{box-sizing:border-box}html,body,#root{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;background:#020a12;color:#edf7ff}body{overflow-x:hidden}button,input,select{font:inherit}button{font-family:inherit}.boot-screen{min-height:100vh;display:grid;place-items:center;background:#020a12;color:#45c7ff;letter-spacing:.16em;font-weight:800} */
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+
+  width: 100%;
+
+  min-width: 0;
+
+  min-height: 100%;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  background: #020a12;
+
+  color: #edf7ff;
+}
+
+html {
+  min-height: 100%;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+  overflow-x: hidden;
+
+  overscroll-behavior-x: none;
+}
+
+/*
+ * Game pages use their own fixed viewport.
+ * Prevent accidental browser scrolling while playing.
+ */
+body.game-running {
+  overflow: hidden;
+
+  touch-action: none;
+}
+
+/* =========================================================
+   FORM ELEMENTS
+========================================================= */
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+select,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select {
+  min-width: 0;
+}
+
+/* =========================================================
+   BOOT SCREEN
+========================================================= */
+
+.boot-screen {
+  min-height: 100vh;
+
+  min-height: 100dvh;
+
+  display: grid;
+
+  place-items: center;
+
+  padding: 24px;
+
+  background: #020a12;
+
+  color: #45c7ff;
+
+  letter-spacing: 0.16em;
+
+  font-weight: 800;
+
+  text-align: center;
+}

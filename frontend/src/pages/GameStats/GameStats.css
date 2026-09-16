@@ -1,1 +1,460 @@
-.stats-page{background:linear-gradient(135deg,#020a12,#071725)}.stats-page h1{font-size:42px;margin:8px 0 30px}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.metric{padding:20px;display:flex;flex-direction:column;gap:10px}.metric svg{color:#41c8ff}.metric span{font-size:9px;letter-spacing:.13em;color:#7694a6}.metric b{font-size:25px}.stats-table{margin-top:20px;overflow:auto}.stats-table table{width:100%;border-collapse:collapse;min-width:700px}.stats-table th,.stats-table td{padding:15px;text-align:center;border-bottom:1px solid #16374b}.stats-table th{font-size:10px;color:#47c8ff;letter-spacing:.12em}.stats-table td{font-size:12px}@media(max-width:1000px){.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){.metrics{grid-template-columns:repeat(2,1fr)}.stats-page h1{font-size:30px}}
+/* .stats-page{background:linear-gradient(135deg,#020a12,#071725)}.stats-page h1{font-size:42px;margin:8px 0 30px}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.metric{padding:20px;display:flex;flex-direction:column;gap:10px}.metric svg{color:#41c8ff}.metric span{font-size:9px;letter-spacing:.13em;color:#7694a6}.metric b{font-size:25px}.stats-table{margin-top:20px;overflow:auto}.stats-table table{width:100%;border-collapse:collapse;min-width:700px}.stats-table th,.stats-table td{padding:15px;text-align:center;border-bottom:1px solid #16374b}.stats-table th{font-size:10px;color:#47c8ff;letter-spacing:.12em}.stats-table td{font-size:12px}@media(max-width:1000px){.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){.metrics{grid-template-columns:repeat(2,1fr)}.stats-page h1{font-size:30px}} */
+/* =========================================================
+   GAME STATS
+========================================================= */
+
+.stats-page {
+  position: relative;
+
+  min-height:
+    calc(100vh - 74px);
+
+  min-height:
+    calc(100dvh - 74px);
+
+  background:
+    linear-gradient(
+      135deg,
+      #020a12,
+      #071725
+    );
+
+  overflow-x: hidden;
+}
+
+.stats-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(30, 115, 160, 0.12),
+      transparent 35%
+    );
+
+  pointer-events: none;
+}
+
+.stats-content {
+  position: relative;
+
+  z-index: 1;
+
+  max-width: 1500px;
+
+  margin: 0 auto;
+}
+
+.stats-page h1 {
+  font-size:
+    clamp(
+      30px,
+      5vw,
+      48px
+    );
+
+  margin:
+    8px 0 30px;
+
+  line-height: 1;
+}
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.metrics {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      5,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+}
+
+.metric {
+  min-width: 0;
+
+  min-height: 135px;
+
+  padding: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.metric-icon {
+  color: #41c8ff;
+
+  height: 24px;
+
+  display: flex;
+
+  align-items: center;
+}
+
+.metric-icon svg {
+  width: 22px;
+
+  height: 22px;
+}
+
+.metric span {
+  font-size: 9px;
+
+  letter-spacing:
+    0.13em;
+
+  color: #7694a6;
+}
+
+.metric b {
+  font-size:
+    clamp(
+      20px,
+      2.5vw,
+      27px
+    );
+
+  color: #f1f8ff;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   TABLE PANEL
+========================================================= */
+
+.stats-table {
+  margin-top: 20px;
+
+  overflow: hidden;
+
+  background:
+    rgba(4, 17, 29, 0.94);
+}
+
+.stats-table-head {
+  padding:
+    18px 20px;
+
+  border-bottom:
+    1px solid #173b51;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+.stats-table-head h2 {
+  margin:
+    6px 0 0;
+
+  font-size: 18px;
+}
+
+.stats-table-head > span {
+  color: #5d91a9;
+
+  font-size: 8px;
+
+  letter-spacing:
+    0.14em;
+}
+
+.stats-table-scroll {
+  width: 100%;
+
+  overflow-x: auto;
+
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    #277ca5
+    #071725;
+}
+
+.stats-table table {
+  width: 100%;
+
+  min-width: 700px;
+
+  border-collapse:
+    collapse;
+}
+
+.stats-table th,
+.stats-table td {
+  padding:
+    14px 15px;
+
+  text-align: center;
+
+  border-bottom:
+    1px solid #16374b;
+
+  white-space: nowrap;
+}
+
+.stats-table th {
+  font-size: 9px;
+
+  color: #47c8ff;
+
+  letter-spacing:
+    0.12em;
+
+  background:
+    #071c2d;
+}
+
+.stats-table td {
+  font-size: 12px;
+
+  color: #b2c7d3;
+}
+
+.stats-table tbody tr:hover {
+  background:
+    #081d2c;
+}
+
+.stats-table .stats-level {
+  text-align: left;
+
+  color: #eef7ff;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   LOADING / ERROR
+========================================================= */
+
+.stats-loading {
+  min-height: 180px;
+
+  display: grid;
+
+  place-items: center;
+
+  color: #55caff;
+
+  font-size: 10px;
+
+  letter-spacing:
+    0.15em;
+}
+
+.stats-error {
+  padding:
+    11px 13px;
+
+  margin-bottom: 14px;
+
+  border-left:
+    3px solid #ff4354;
+
+  background:
+    rgba(65, 13, 21, 0.75);
+
+  color: #ffadb5;
+
+  font-size: 11px;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+  .metrics {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+/* =========================================================
+   MOBILE LANDSCAPE
+========================================================= */
+
+@media (
+  max-width: 850px
+) and (
+  orientation: landscape
+) {
+  .stats-page h1 {
+    font-size: 30px;
+
+    margin-bottom: 18px;
+  }
+
+  .metrics {
+    grid-template-columns:
+      repeat(
+        5,
+        minmax(130px, 1fr)
+      );
+
+    gap: 8px;
+  }
+
+  .metric {
+    min-height: 100px;
+
+    padding: 12px;
+  }
+
+  .metric b {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   PORTRAIT MOBILE
+========================================================= */
+
+@media (orientation: portrait) {
+  .stats-page {
+    min-height: 100dvh;
+  }
+
+  .stats-page h1 {
+    font-size:
+      clamp(
+        27px,
+        8vw,
+        36px
+      );
+
+    margin-bottom: 20px;
+  }
+
+  .metrics {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 9px;
+  }
+
+  .metric {
+    min-height: 112px;
+
+    padding:
+      14px 13px;
+
+    gap: 7px;
+  }
+
+  .metric-icon {
+    height: 20px;
+  }
+
+  .metric-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .metric span {
+    font-size: 7px;
+  }
+
+  .metric b {
+    font-size: 19px;
+  }
+
+  /*
+   * The fifth metric occupies the full width,
+   * making the mobile dashboard balanced.
+   */
+  .metric:last-child {
+    grid-column:
+      1 / -1;
+
+    min-height: 90px;
+  }
+
+  .stats-table {
+    margin-top: 14px;
+  }
+
+  .stats-table-head {
+    padding:
+      14px;
+
+    align-items:
+      flex-start;
+
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+  .stats-table-head h2 {
+    font-size: 15px;
+  }
+
+  .stats-table-head > span {
+    font-size: 7px;
+  }
+
+  .stats-table th,
+  .stats-table td {
+    padding:
+      12px 11px;
+  }
+
+  .stats-table table {
+    min-width: 700px;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (
+  orientation: portrait
+) and (
+  max-width: 390px
+) {
+  .metrics {
+    gap: 7px;
+  }
+
+  .metric {
+    padding:
+      12px 10px;
+  }
+
+  .metric b {
+    font-size: 17px;
+  }
+
+  .stats-table-head {
+    padding:
+      12px;
+    }
+}
