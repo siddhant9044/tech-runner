@@ -1,0 +1,1 @@
+export { aimlConfig } from './aimlConfig';

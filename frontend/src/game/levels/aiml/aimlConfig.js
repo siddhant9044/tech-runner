@@ -1,0 +1,3 @@
+export const aimlConfig = { key:'aiml', name:'AI / MACHINE LEARNING', background:'/assets/backgrounds/aiml-background.png', baseSpeed:300, maxSpeedBonus:85, accent:0x79e3ff, overlay:0x071625, obstacles:[
+{id:'neural',label:'NEURAL NODE',w:82,h:82,fill:0x17364a,stroke:0x79e3ff,motion:'bob'}, {id:'model',label:'AI MODEL',w:96,h:78,fill:0x23334d,stroke:0xa6e6ff}, {id:'dataset',label:'DATASET',w:92,h:72,fill:0x183f45,stroke:0x62f0c4}, {id:'corrupt',label:'CORRUPTED DATA',w:112,h:76,fill:0x43272e,stroke:0xff6678}, {id:'gpu',label:'GPU CORE',w:90,h:102,fill:0x27344b,stroke:0x8fdcff}, {id:'overfit',label:'OVERFIT',w:100,h:74,fill:0x3e3519,stroke:0xffd65a}
+]};

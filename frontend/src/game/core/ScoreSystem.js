@@ -1,0 +1,1 @@
+export function calculateLocalScore({ distance, coins, obstaclesHit, livesRemaining, bossDefeated = false }) { return Math.max(0, Math.round(distance * 1.5 + coins * 25 + livesRemaining * 50 - obstaclesHit * 35 + (bossDefeated ? 1000 : 0))); }

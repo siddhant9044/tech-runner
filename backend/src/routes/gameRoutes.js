@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { createSessionController, getSessionController, startLevelController, completeLevelController, gameOverController, finalizeController } from '../controllers/gameController.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
+const router = Router();
+router.use(requireAuth);
+router.post('/session', createSessionController);
+router.get('/session/:sessionId', getSessionController);
+router.post('/level/start', startLevelController);
+router.post('/level/complete', completeLevelController);
+router.post('/game-over', gameOverController);
+router.post('/finalize', finalizeController);
+export default router;

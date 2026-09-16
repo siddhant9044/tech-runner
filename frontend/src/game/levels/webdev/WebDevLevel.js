@@ -1,0 +1,1 @@
+export { webdevConfig } from './webdevConfig';

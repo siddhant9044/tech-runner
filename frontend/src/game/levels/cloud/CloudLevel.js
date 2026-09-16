@@ -1,0 +1,1 @@
+export { cloudConfig } from './cloudConfig';

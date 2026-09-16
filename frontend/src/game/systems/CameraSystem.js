@@ -1,0 +1,1 @@
+export function configureCamera(scene, player, worldWidth){scene.cameras.main.setBounds(0,0,worldWidth,720);scene.cameras.main.startFollow(player,true,.08,.08,-240,0);scene.cameras.main.setDeadzone(360,220);}

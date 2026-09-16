@@ -1,0 +1,3 @@
+export const cloudConfig = { key:'cloud', name:'CLOUD COMPUTING', background:'/assets/backgrounds/cloud-background.png', baseSpeed:290, maxSpeedBonus:75, accent:0x36b8ff, overlay:0x071a2b, obstacles:[
+{id:'server',label:'SERVER RACK',w:78,h:92,fill:0x123b5a,stroke:0x5dd6ff}, {id:'storage',label:'STORAGE',w:92,h:75,fill:0x17435d,stroke:0x8be9ff}, {id:'packet',label:'DATA PACKET',w:70,h:70,fill:0x0e5472,stroke:0x36b8ff,motion:'bob'}, {id:'node',label:'NETWORK NODE',w:82,h:82,fill:0x113b5d,stroke:0x7cdcff}, {id:'vm',label:'VIRTUAL MACHINE',w:105,h:65,fill:0x16344a,stroke:0x65cfff}, {id:'firewall',label:'CLOUD FIREWALL',w:82,h:110,fill:0x172d3d,stroke:0x9de7ff}
+]};

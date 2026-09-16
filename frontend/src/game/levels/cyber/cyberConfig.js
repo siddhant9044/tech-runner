@@ -1,0 +1,3 @@
+export const cyberConfig = { key:'cyber', name:'CYBERSECURITY', background:'/assets/backgrounds/cyber-background.png', baseSpeed:305, maxSpeedBonus:95, accent:0xff3d4e, overlay:0x06111d, obstacles:[
+{id:'firewall',label:'FIREWALL',w:88,h:105,fill:0x34202a,stroke:0xff3d4e}, {id:'malware',label:'MALWARE',w:86,h:82,fill:0x3a2027,stroke:0xff596a}, {id:'ransom',label:'RANSOMWARE',w:110,h:82,fill:0x472127,stroke:0xff6678}, {id:'phishing',label:'PHISHING',w:96,h:78,fill:0x3d341d,stroke:0xffd15c}, {id:'ddos',label:'DDoS',w:86,h:92,fill:0x3b202b,stroke:0xff3d4e,motion:'sweep'}, {id:'exploit',label:'EXPLOIT',w:94,h:72,fill:0x2c1f3e,stroke:0xc28bff}
+]};

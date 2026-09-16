@@ -1,0 +1,7 @@
+import * as gameService from '../services/gameService.js';
+export async function createSessionController(req, res) { const session = await gameService.createSession(req.auth.sub); res.status(201).json({ ok: true, session }); }
+export async function getSessionController(req, res) { const session = await gameService.getSession(req.params.sessionId, req.auth.sub); res.json({ ok: true, session }); }
+export async function startLevelController(req, res) { const run = await gameService.startLevel({ sessionId: req.body.sessionId, playerId: req.auth.sub, level: req.body.level }); res.json({ ok: true, run }); }
+export async function completeLevelController(req, res) { const result = await gameService.completeLevel({ sessionId: req.body.sessionId, playerId: req.auth.sub, level: req.body.level, result: req.body }); if (result.final) req.app.get('io').to('leaderboard').emit('leaderboard:update', { sessionId: result.session.sessionId }); res.json({ ok: true, ...result }); }
+export async function gameOverController(req, res) { const session = await gameService.recordGameOver({ sessionId: req.body.sessionId, playerId: req.auth.sub, level: req.body.level, result: req.body }); res.json({ ok: true, session }); }
+export async function finalizeController(req, res) { const session = await gameService.finalizeSession({ sessionId: req.body.sessionId, playerId: req.auth.sub }); res.json({ ok: true, session }); }

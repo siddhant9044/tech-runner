@@ -1,0 +1,1 @@
+export class DifficultyManager { constructor(scene,config){this.scene=scene;this.config=config;} speedFor(distance){return this.config.baseSpeed + Math.min(this.config.maxSpeedBonus, distance*0.08);} }

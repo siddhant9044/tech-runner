@@ -1,0 +1,3 @@
+export const webdevConfig = { key:'webdev', name:'WEB DEVELOPMENT', background:'/assets/backgrounds/webdev-background.png', baseSpeed:295, maxSpeedBonus:80, accent:0x52d5ff, overlay:0x061724, obstacles:[
+{id:'html',label:'<HTML>',w:86,h:84,fill:0x263b48,stroke:0xff8a45}, {id:'css',label:'CSS',w:78,h:98,fill:0x173a52,stroke:0x4da3ff}, {id:'js',label:'JS WARNING',w:96,h:74,fill:0x3b3418,stroke:0xffd54a}, {id:'browser',label:'BROKEN BROWSER',w:112,h:88,fill:0x1a3142,stroke:0x79e3ff}, {id:'dom',label:'DOM NODE',w:76,h:76,fill:0x1b3d4b,stroke:0x52d5ff,motion:'bob'}, {id:'api',label:'HTTP 500',w:92,h:76,fill:0x42202a,stroke:0xff6678}
+]};
