@@ -231,6 +231,12 @@
 
   height:
     100dvh;
+
+  min-height:
+    100dvh;
+
+  max-height:
+    100dvh;
 }
 
 .app-shell.game-view-expanded
@@ -1047,4 +1053,51 @@
     transition:
       none;
   }
+}
+
+/* =========================================================
+   MOBILE GAME VIEWPORT SAFETY
+========================================================= */
+
+html,
+body {
+  overscroll-behavior: none;
+}
+
+body.game-running {
+  overflow: hidden;
+  touch-action: none;
+}
+
+body.game-running .app-shell {
+  overscroll-behavior: none;
+}
+
+.app-shell.game-view-expanded {
+  position: relative;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.app-shell.game-view-expanded .game-page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.app-shell.game-view-expanded .phaser-host {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-shell.game-view-expanded .phaser-host canvas {
+  touch-action: none !important;
 }

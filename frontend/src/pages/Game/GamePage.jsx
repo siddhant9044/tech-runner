@@ -869,6 +869,9 @@ export default function GamePage() {
 
   useEffect(() => {
     let alive = true;
+    let resizeObserver = null;
+    let handleGameResize = null;
+    let resizeFrame = null;
 
     if (
       !config ||
@@ -1143,6 +1146,74 @@ export default function GamePage() {
 
         /*
          * =====================================================
+         * ROBUST VIEWPORT RESIZE
+         * =====================================================
+         *
+         * Android Chrome may change the visual viewport when
+         * its address bar appears/disappears. Never recreate
+         * the Phaser game because of that change.
+         */
+        handleGameResize =
+          () => {
+            if (!game) {
+              return;
+            }
+
+            if (resizeFrame) {
+              cancelAnimationFrame(
+                resizeFrame
+              );
+            }
+
+            resizeFrame =
+              requestAnimationFrame(() => {
+                try {
+                  game.scale?.refresh?.();
+
+                  /*
+                   * A viewport transition must not permanently
+                   * disable Phaser input.
+                   */
+                  if (game.input) {
+                    game.input.enabled = true;
+                  }
+                } catch {
+                  // Ignore resize during teardown.
+                }
+              });
+          };
+
+        window.addEventListener(
+          'resize',
+          handleGameResize,
+          { passive: true }
+        );
+
+        window.visualViewport?.addEventListener(
+          'resize',
+          handleGameResize,
+          { passive: true }
+        );
+
+        if (
+          typeof ResizeObserver !==
+            'undefined' &&
+          hostRef.current
+        ) {
+          resizeObserver =
+            new ResizeObserver(
+              handleGameResize
+            );
+
+          resizeObserver.observe(
+            hostRef.current
+          );
+        }
+
+        handleGameResize();
+
+        /*
+         * =====================================================
          * SERVER RESULT CALLBACK
          * =====================================================
          */
@@ -1275,6 +1346,36 @@ export default function GamePage() {
 
     return () => {
       alive = false;
+
+      if (resizeFrame) {
+        cancelAnimationFrame(
+          resizeFrame
+        );
+        resizeFrame = null;
+      }
+
+      if (resizeObserver) {
+        try {
+          resizeObserver.disconnect();
+        } catch {
+          // Ignore observer teardown errors.
+        }
+        resizeObserver = null;
+      }
+
+      if (handleGameResize) {
+        window.removeEventListener(
+          'resize',
+          handleGameResize
+        );
+
+        window.visualViewport?.removeEventListener(
+          'resize',
+          handleGameResize
+        );
+
+        handleGameResize = null;
+      }
 
       if (
         gameRef.current

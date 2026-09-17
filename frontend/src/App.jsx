@@ -884,23 +884,30 @@ function AppShell({
        */
 
       if (isTouchDevice) {
+        /*
+         * MOBILE EXPANDED VIEW
+         *
+         * Never call requestFullscreen() on a touch device.
+         * Android Chrome can show its native fullscreen
+         * instruction overlay, which can cover the game.
+         *
+         * The existing expand button therefore uses the
+         * in-app expanded view instead.
+         */
         setGameViewExpanded(
           (value) =>
             !value
         );
 
         /*
-         * Let the browser finish its current viewport
-         * update before Phaser recalculates its canvas.
+         * Let layout settle, then tell Phaser to recalculate
+         * its FIT canvas. The Phaser game is NOT recreated.
          */
-
         window.setTimeout(() => {
           window.dispatchEvent(
-            new Event(
-              'resize'
-            )
+            new Event('resize')
           );
-        }, 80);
+        }, 120);
 
         return;
       }

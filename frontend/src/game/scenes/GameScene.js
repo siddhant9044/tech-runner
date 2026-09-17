@@ -1,20 +1,20 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
-import { Player } from '../entities/Player';
-import { Boss } from '../entities/Boss';
+import { Player } from "../entities/Player";
+import { Boss } from "../entities/Boss";
 
-import { ObstacleSpawner } from '../systems/ObstacleSpawner';
-import { DifficultyManager } from '../systems/DifficultyManager';
-import { ParticleSystem } from '../systems/ParticleSystem';
+import { ObstacleSpawner } from "../systems/ObstacleSpawner";
+import { DifficultyManager } from "../systems/DifficultyManager";
+import { ParticleSystem } from "../systems/ParticleSystem";
 
-import { HUD } from '../ui/HUD';
-import { MobileControls } from '../ui/MobileControls';
-import { ComicMessageSystem } from '../ui/ComicMessageSystem';
+import { HUD } from "../ui/HUD";
+import { MobileControls } from "../ui/MobileControls";
+import { ComicMessageSystem } from "../ui/ComicMessageSystem";
 
-import { GameState } from '../core/GameState';
-import { LifeSystem } from '../core/LifeSystem';
-import { calculateLocalScore } from '../core/ScoreSystem';
-import { AudioManager } from '../core/AudioManager';
+import { GameState } from "../core/GameState";
+import { LifeSystem } from "../core/LifeSystem";
+import { calculateLocalScore } from "../core/ScoreSystem";
+import { AudioManager } from "../core/AudioManager";
 
 import {
   GAME_WIDTH,
@@ -31,39 +31,33 @@ import {
   CYBER_BOSS_PLAYER_X,
   CYBER_BOSS_X,
   PLAYER_FALL_Y,
-} from '../core/GameConfig';
+} from "../core/GameConfig";
 
 export class GameScene extends Phaser.Scene {
   constructor() {
-    super('GameScene');
+    super("GameScene");
   }
 
   init() {
     this.config =
-      this.registry.get(
-        'levelConfig'
-      ) || {};
+      this.registry.get("levelConfig") || {};
 
-    this.initialLives =
-      Math.min(
-        MAX_LIVES,
-        Math.max(
-          1,
-          Math.floor(
-            Number(
-              this.registry.get(
-                'initialLives'
-              )
-            ) || MAX_LIVES
-          )
+    this.initialLives = Math.min(
+      MAX_LIVES,
+      Math.max(
+        1,
+        Math.floor(
+          Number(
+            this.registry.get("initialLives")
+          ) || MAX_LIVES
         )
-      );
+      )
+    );
 
-    this.state =
-      new GameState(
-        this.config.key,
-        this.initialLives
-      );
+    this.state = new GameState(
+      this.config.key,
+      this.initialLives
+    );
 
     this.lifeSystem =
       new LifeSystem(
@@ -71,54 +65,34 @@ export class GameScene extends Phaser.Scene {
       );
 
     this.finished = false;
-
     this.respawning = false;
-
     this.paused = false;
 
     this.bossMode = false;
-
     this.boss = null;
 
     this.lastHitAt = 0;
-
     this.attackCooldown = 0;
 
-    /*
-     * Latest checkpoint.
-     */
     this.checkpointX =
       PLAYER_START_X;
 
     this.checkpointY =
       PLAYER_START_Y;
 
-    this.checkpointDistance =
-      0;
+    this.checkpointDistance = 0;
+    this.checkpointNumber = 0;
 
-    this.checkpointNumber =
-      0;
-
-    /*
-     * Last safe position.
-     */
     this.lastSafeX =
       PLAYER_START_X;
 
     this.lastSafeY =
       PLAYER_START_Y;
 
-    /*
-     * Keyboard.
-     */
-    this.keyboardState =
-      new Set();
+    this.keyboardState = new Set();
 
-    this.jumpRequested =
-      false;
-
-    this.attackRequested =
-      false;
+    this.jumpRequested = false;
+    this.attackRequested = false;
   }
 
   create() {
@@ -130,19 +104,13 @@ export class GameScene extends Phaser.Scene {
     );
 
     this.buildBackground();
-
     this.buildWorld();
 
-    /*
-     * PLAYER
-     */
-
-    this.player =
-      new Player(
-        this,
-        PLAYER_START_X,
-        PLAYER_START_Y
-      );
+    this.player = new Player(
+      this,
+      PLAYER_START_X,
+      PLAYER_START_Y
+    );
 
     this.player.stop();
 
@@ -152,14 +120,8 @@ export class GameScene extends Phaser.Scene {
     this.lastSafeY =
       this.player.y;
 
-    /*
-     * SYSTEMS
-     */
-
     this.particles =
-      new ParticleSystem(
-        this
-      );
+      new ParticleSystem(this);
 
     this.spawner =
       new ObstacleSpawner(
@@ -180,101 +142,97 @@ export class GameScene extends Phaser.Scene {
       );
 
     this.mobile =
-      new MobileControls(
-        this
-      );
+      new MobileControls(this);
 
     this.comic =
-      new ComicMessageSystem(
-        this
-      );
-
-    /*
-     * INPUT
-     */
+      new ComicMessageSystem(this);
 
     this.buildKeyboardControls();
-
     this.buildMuteButton();
 
     /*
-     * PLAYER / PLATFORM COLLISION
+     * One-way upper platforms.
+     *
+     * The player can jump through a platform from below.
+     * Collision happens only while falling or standing.
      */
-
     this.physics.add.collider(
       this.player,
-      this.platforms
-    );
+      this.platforms,
+      null,
+      (player, platform) => {
+        const body =
+          player?.body;
 
-    /*
-     * OBSTACLES
-     *
-     * Important:
-     * This is OVERLAP, not collider.
-     *
-     * Therefore obstacles cannot physically
-     * stop the player.
-     */
+        const platformBody =
+          platform?.body;
 
-    this.physics.add.overlap(
-      this.player,
-      this.spawner.obstacles,
-      (_player, obstacle) => {
-        this.onObstacle(
-          obstacle
+        if (
+          !body ||
+          !platformBody
+        ) {
+          return true;
+        }
+
+        const fallingOrStanding =
+          body.velocity.y >= -20;
+
+        const playerBottom =
+          body.bottom;
+
+        const platformTop =
+          platformBody.top;
+
+        const approachingTop =
+          playerBottom <=
+          platformTop + 24;
+
+        return (
+          fallingOrStanding &&
+          approachingTop
         );
       }
     );
 
     /*
-     * COINS
+     * Obstacles use overlap instead of collider.
+     * They cannot physically stop the player.
      */
+    this.physics.add.overlap(
+      this.player,
+      this.spawner.obstacles,
+      (_player, obstacle) => {
+        this.onObstacle(obstacle);
+      }
+    );
 
     this.physics.add.overlap(
       this.player,
       this.spawner.coins,
       (_player, coin) => {
-        this.onCoin(
-          coin
-        );
+        this.onCoin(coin);
       }
     );
-
-    /*
-     * POWERUPS
-     */
 
     this.physics.add.overlap(
       this.player,
       this.spawner.powerups,
       (_player, powerup) => {
-        this.onPowerup(
-          powerup
-        );
+        this.onPowerup(powerup);
       }
     );
-
-    /*
-     * PLAYER BULLETS
-     */
 
     this.bullets =
       this.physics.add.group({
         allowGravity: false,
       });
 
-    /*
-     * BOSS PROJECTILES
-     */
-
     this.bossProjectiles =
       this.physics.add.group({
         allowGravity: false,
       });
 
-    Boss.createProjectile(
-      this
-    );
+    Boss.createProjectile(this);
 
     this.physics.add.overlap(
       this.player,
@@ -294,18 +252,10 @@ export class GameScene extends Phaser.Scene {
 
     this.comic.show(
       `${
-        this.config.name ||
-        'LEVEL'
+        this.config.name || "LEVEL"
       } — RUN, JUMP, SURVIVE`,
       1500
     );
-
-    /*
-     * CAMERA
-     *
-     * The larger deadzone lets the player visibly
-     * move around the screen before camera tracking.
-     */
 
     this.cameras.main.setBounds(
       0,
@@ -329,13 +279,13 @@ export class GameScene extends Phaser.Scene {
     );
 
     this.events.once(
-      'shutdown',
+      "shutdown",
       this.cleanup,
       this
     );
 
     this.events.once(
-      'destroy',
+      "destroy",
       this.cleanup,
       this
     );
@@ -344,7 +294,7 @@ export class GameScene extends Phaser.Scene {
   buildBackground() {
     if (
       this.textures.exists(
-        'level-background'
+        "level-background"
       )
     ) {
       this.add
@@ -353,7 +303,7 @@ export class GameScene extends Phaser.Scene {
           360,
           WORLD_WIDTH,
           GAME_HEIGHT,
-          'level-background'
+          "level-background"
         )
         .setDepth(-20)
         .setScrollFactor(
@@ -389,10 +339,6 @@ export class GameScene extends Phaser.Scene {
     this.platforms =
       this.physics.add.staticGroup();
 
-    /*
-     * Main ground.
-     */
-
     const ground =
       this.add
         .rectangle(
@@ -413,9 +359,7 @@ export class GameScene extends Phaser.Scene {
       true
     );
 
-    this.platforms.add(
-      ground
-    );
+    this.platforms.add(ground);
 
     this.add.rectangle(
       WORLD_WIDTH / 2,
@@ -427,12 +371,7 @@ export class GameScene extends Phaser.Scene {
       0.9
     );
 
-    /*
-     * Upper platforms.
-     */
-
-    const platformY =
-      500;
+    const platformY = 500;
 
     const platformData = [
       [850, platformY, 260],
@@ -483,214 +422,169 @@ export class GameScene extends Phaser.Scene {
 
   buildKeyboardControls() {
     this.keys = {
-      a:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.A
-        ),
+      a: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.A
+      ),
 
-      d:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.D
-        ),
+      d: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.D
+      ),
 
-      w:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.W
-        ),
+      w: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.W
+      ),
 
-      s:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.S
-        ),
+      s: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.S
+      ),
 
-      f:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.F
-        ),
+      f: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.F
+      ),
 
-      left:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.LEFT
-        ),
+      left: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.LEFT
+      ),
 
-      right:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.RIGHT
-        ),
+      right: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.RIGHT
+      ),
 
-      up:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.UP
-        ),
+      up: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.UP
+      ),
 
-      down:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.DOWN
-        ),
+      down: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.DOWN
+      ),
 
-      space:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.SPACE
-        ),
+      space: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.SPACE
+      ),
 
-      escape:
-        this.input.keyboard.addKey(
-          Phaser.Input.Keyboard.KeyCodes.ESC
-        ),
+      escape: this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.ESC
+      ),
     };
 
-    this.handleKeyDown =
-      (event) => {
-        if (
-          this.finished
-        ) {
-          return;
-        }
+    this.handleKeyDown = (event) => {
+      if (this.finished) {
+        return;
+      }
 
-        const key =
-          String(
-            event.key || ''
-          ).toLowerCase();
+      const key =
+        String(
+          event.key || ""
+        ).toLowerCase();
 
-        const code =
-          String(
-            event.code || ''
-          ).toLowerCase();
+      const code =
+        String(
+          event.code || ""
+        ).toLowerCase();
 
-        const validKeys =
-          [
-            'a',
-            'd',
-            'w',
-            's',
-            'f',
-            'arrowleft',
-            'arrowright',
-            'arrowup',
-            'arrowdown',
-            ' ',
-            'spacebar',
-            'escape',
-          ];
+      const validKeys = [
+        "a",
+        "d",
+        "w",
+        "s",
+        "f",
+        "arrowleft",
+        "arrowright",
+        "arrowup",
+        "arrowdown",
+        " ",
+        "spacebar",
+        "escape",
+      ];
 
-        const validCodes =
-          [
-            'keya',
-            'keyd',
-            'keyw',
-            'keys',
-            'keyf',
-            'arrowleft',
-            'arrowright',
-            'arrowup',
-            'arrowdown',
-            'space',
-            'escape',
-          ];
+      const validCodes = [
+        "keya",
+        "keyd",
+        "keyw",
+        "keys",
+        "keyf",
+        "arrowleft",
+        "arrowright",
+        "arrowup",
+        "arrowdown",
+        "space",
+        "escape",
+      ];
 
-        if (
-          !validKeys.includes(
-            key
-          ) &&
-          !validCodes.includes(
-            code
-          )
-        ) {
-          return;
-        }
+      if (
+        !validKeys.includes(key) &&
+        !validCodes.includes(code)
+      ) {
+        return;
+      }
 
-        event.preventDefault();
+      event.preventDefault();
 
-        this.keyboardState.add(
-          key
-        );
+      this.keyboardState.add(key);
+      this.keyboardState.add(code);
 
-        this.keyboardState.add(
-          code
-        );
+      if (
+        !event.repeat &&
+        (
+          key === "w" ||
+          code === "keyw" ||
+          key === "arrowup" ||
+          code === "arrowup" ||
+          key === " " ||
+          key === "spacebar" ||
+          code === "space"
+        )
+      ) {
+        this.jumpRequested = true;
+      }
 
-        /*
-         * One-shot jump.
-         *
-         * No old Phaser jump latch is used.
-         */
-        if (
-          !event.repeat &&
-          (
-            key === 'w' ||
-            code === 'keyw' ||
-            key === 'arrowup' ||
-            code === 'arrowup' ||
-            key === ' ' ||
-            key === 'spacebar' ||
-            code === 'space'
-          )
-        ) {
-          this.jumpRequested =
-            true;
-        }
+      if (
+        !event.repeat &&
+        (
+          key === "f" ||
+          code === "keyf"
+        )
+      ) {
+        this.attackRequested = true;
+      }
 
-        /*
-         * Cyber attack.
-         */
-        if (
-          !event.repeat &&
-          (
-            key === 'f' ||
-            code === 'keyf'
-          )
-        ) {
-          this.attackRequested =
-            true;
-        }
+      if (
+        !event.repeat &&
+        (
+          key === "escape" ||
+          code === "escape"
+        )
+      ) {
+        this.togglePause();
+      }
+    };
 
-        if (
-          !event.repeat &&
-          (
-            key === 'escape' ||
-            code === 'escape'
-          )
-        ) {
-          this.togglePause();
-        }
-      };
+    this.handleKeyUp = (event) => {
+      const key =
+        String(
+          event.key || ""
+        ).toLowerCase();
 
-    this.handleKeyUp =
-      (event) => {
-        const key =
-          String(
-            event.key || ''
-          ).toLowerCase();
+      const code =
+        String(
+          event.code || ""
+        ).toLowerCase();
 
-        const code =
-          String(
-            event.code || ''
-          ).toLowerCase();
+      this.keyboardState.delete(key);
+      this.keyboardState.delete(code);
+    };
 
-        this.keyboardState.delete(
-          key
-        );
+    this.handleBlur = () => {
+      this.keyboardState.clear();
 
-        this.keyboardState.delete(
-          code
-        );
-      };
+      this.jumpRequested = false;
+      this.attackRequested = false;
 
-    this.handleBlur =
-      () => {
-        this.keyboardState.clear();
-
-        this.jumpRequested =
-          false;
-
-        this.attackRequested =
-          false;
-
-        this.mobile?.releaseAll?.();
-      };
+      this.mobile?.releaseAll?.();
+    };
 
     window.addEventListener(
-      'keydown',
+      "keydown",
       this.handleKeyDown,
       {
         passive: false,
@@ -698,38 +592,35 @@ export class GameScene extends Phaser.Scene {
     );
 
     window.addEventListener(
-      'keyup',
+      "keyup",
       this.handleKeyUp
     );
 
     window.addEventListener(
-      'blur',
+      "blur",
       this.handleBlur
     );
 
     document.addEventListener(
-      'visibilitychange',
+      "visibilitychange",
       this.handleBlur
     );
 
-    this.input.keyboard.enabled =
-      true;
+    this.input.keyboard.enabled = true;
 
-    this.input.keyboard.addCapture(
-      [
-        'A',
-        'D',
-        'W',
-        'S',
-        'F',
-        'LEFT',
-        'RIGHT',
-        'UP',
-        'DOWN',
-        'SPACE',
-        'ESC',
-      ]
-    );
+    this.input.keyboard.addCapture([
+      "A",
+      "D",
+      "W",
+      "S",
+      "F",
+      "LEFT",
+      "RIGHT",
+      "UP",
+      "DOWN",
+      "SPACE",
+      "ESC",
+    ]);
   }
 
   buildMuteButton() {
@@ -739,24 +630,15 @@ export class GameScene extends Phaser.Scene {
           GAME_WIDTH - 24,
           95,
           AudioManager.muted
-            ? 'SOUND OFF'
-            : 'SOUND ON',
+            ? "SOUND OFF"
+            : "SOUND ON",
           {
-            fontFamily:
-              'Arial',
-
-            fontSize:
-              '13px',
-
-            fontStyle:
-              'bold',
-
-            color:
-              '#ffffff',
-
+            fontFamily: "Arial",
+            fontSize: "13px",
+            fontStyle: "bold",
+            color: "#ffffff",
             backgroundColor:
-              '#07111dcc',
-
+              "#07111dcc",
             padding: {
               left: 10,
               right: 10,
@@ -765,33 +647,27 @@ export class GameScene extends Phaser.Scene {
             },
           }
         )
-        .setOrigin(
-          1,
-          0
-        )
+        .setOrigin(1, 0)
         .setScrollFactor(0)
         .setDepth(60)
         .setInteractive();
 
     this.muteButton.on(
-      'pointerdown',
+      "pointerdown",
       () => {
         const muted =
           AudioManager.toggle();
 
         this.muteButton.setText(
           muted
-            ? 'SOUND OFF'
-            : 'SOUND ON'
+            ? "SOUND OFF"
+            : "SOUND ON"
         );
       }
     );
   }
 
-  update(
-    time,
-    delta
-  ) {
+  update(time, delta) {
     if (
       this.finished ||
       this.paused
@@ -799,8 +675,24 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.state.time +=
-      delta;
+    /*
+     * Recover input after browser viewport changes.
+     */
+    if (
+      this.input &&
+      this.input.enabled === false
+    ) {
+      this.input.enabled = true;
+    }
+
+    if (
+      this.physics?.world &&
+      this.physics.world.isPaused
+    ) {
+      this.physics.world.isPaused = false;
+    }
+
+    this.state.time += delta;
 
     this.attackCooldown =
       Math.max(
@@ -809,114 +701,70 @@ export class GameScene extends Phaser.Scene {
           delta
       );
 
-    const held =
-      (...names) =>
-        names.some(
-          (name) =>
-            this.keyboardState.has(
-              name
-            )
-        );
+    const held = (...names) =>
+      names.some(
+        (name) =>
+          this.keyboardState.has(name)
+      );
 
-    const phaserHeld =
-      (key) =>
-        Boolean(
-          key?.isDown
-        );
-
-    /*
-     * LEFT
-     */
+    const phaserHeld = (key) =>
+      Boolean(key?.isDown);
 
     const left =
       held(
-        'a',
-        'keya',
-        'arrowleft'
+        "a",
+        "keya",
+        "arrowleft"
       ) ||
-      phaserHeld(
-        this.keys?.a
-      ) ||
-      phaserHeld(
-        this.keys?.left
-      ) ||
+      phaserHeld(this.keys?.a) ||
+      phaserHeld(this.keys?.left) ||
       Boolean(
         this.mobile?.state?.left
       );
 
-    /*
-     * RIGHT
-     */
-
     const right =
       held(
-        'd',
-        'keyd',
-        'arrowright'
+        "d",
+        "keyd",
+        "arrowright"
       ) ||
-      phaserHeld(
-        this.keys?.d
-      ) ||
-      phaserHeld(
-        this.keys?.right
-      ) ||
+      phaserHeld(this.keys?.d) ||
+      phaserHeld(this.keys?.right) ||
       Boolean(
         this.mobile?.state?.right
       );
 
-    /*
-     * CROUCH
-     */
-
     const crouch =
       held(
-        's',
-        'keys',
-        'arrowdown'
+        "s",
+        "keys",
+        "arrowdown"
       ) ||
-      phaserHeld(
-        this.keys?.s
-      ) ||
-      phaserHeld(
-        this.keys?.down
-      ) ||
+      phaserHeld(this.keys?.s) ||
+      phaserHeld(this.keys?.down) ||
       Boolean(
         this.mobile?.state?.crouch
       );
-
-    /*
-     * JUMP
-     */
 
     const jump =
       this.jumpRequested ||
       Boolean(
         this.mobile?.consumePress?.(
-          'jump'
+          "jump"
         )
       );
 
-    this.jumpRequested =
-      false;
-
-    /*
-     * ATTACK
-     */
+    this.jumpRequested = false;
 
     const attack =
       this.attackRequested ||
       Boolean(
         this.mobile?.consumePress?.(
-          'attack'
+          "attack"
         )
       );
 
-    this.attackRequested =
-      false;
-
-    /*
-     * SPEED
-     */
+    this.attackRequested = false;
 
     const baseSpeed =
       this.difficulty.speedFor(
@@ -931,10 +779,6 @@ export class GameScene extends Phaser.Scene {
           )
         : baseSpeed;
 
-    /*
-     * MOVEMENT
-     */
-
     this.player.updateControls({
       left,
       right,
@@ -942,41 +786,15 @@ export class GameScene extends Phaser.Scene {
       crouch,
     });
 
-    /*
-     * SAFE POSITION
-     */
-
     this.updateSafePosition();
-
-    /*
-     * DISTANCE
-     */
-
     this.updateDistance();
-
-    /*
-     * SPAWN
-     */
 
     this.spawner.spawnUntil(
       this.player.x
     );
 
-    /*
-     * CHECKPOINT
-     */
-
     this.updateCheckpoint();
-
-    /*
-     * HUD
-     */
-
     this.updateHud();
-
-    /*
-     * FALL
-     */
 
     if (
       this.player.y >
@@ -985,7 +803,6 @@ export class GameScene extends Phaser.Scene {
       this.takeDamage({
         deathX:
           this.lastSafeX,
-
         deathY:
           this.lastSafeY,
       });
@@ -993,51 +810,31 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    /*
-     * CYBER BOSS
-     */
-
     if (
       !this.bossMode &&
-      this.config.key ===
-        'cyber' &&
+      this.config.key === "cyber" &&
       this.player.x >=
         CYBER_BOSS_TRIGGER_X
     ) {
       this.startBoss();
     }
 
-    /*
-     * NORMAL LEVEL COMPLETE
-     */
-
     if (
       !this.bossMode &&
-      this.config.key !==
-        'cyber' &&
+      this.config.key !== "cyber" &&
       this.player.x >=
         LEVEL_COMPLETE_X
     ) {
       this.completeRunnerLevel();
-
       return;
     }
 
-    /*
-     * BOSS MODE
-     */
-
-    if (
-      this.bossMode
-    ) {
+    if (this.bossMode) {
       if (attack) {
         this.shoot();
       }
 
-      this.boss?.update(
-        time
-      );
-
+      this.boss?.update(time);
       this.checkBossHits();
     }
 
@@ -1082,10 +879,6 @@ export class GameScene extends Phaser.Scene {
         )
       );
 
-    /*
-     * Never reduce recorded progress when
-     * the player teleports back to a checkpoint.
-     */
     this.state.distance =
       Math.max(
         this.state.distance,
@@ -1102,8 +895,7 @@ export class GameScene extends Phaser.Scene {
       this.checkpointDistance +=
         CHECKPOINT_INTERVAL;
 
-      this.checkpointNumber +=
-        1;
+      this.checkpointNumber += 1;
 
       this.checkpointX =
         Phaser.Math.Clamp(
@@ -1154,21 +946,12 @@ export class GameScene extends Phaser.Scene {
           GROUND_Y - 100,
           `CHECKPOINT ${this.checkpointNumber}`,
           {
-            fontFamily:
-              'Arial',
-
-            fontSize:
-              '12px',
-
-            fontStyle:
-              'bold',
-
-            color:
-              '#ffffff',
-
+            fontFamily: "Arial",
+            fontSize: "12px",
+            fontStyle: "bold",
+            color: "#ffffff",
             backgroundColor:
-              '#07111dcc',
-
+              "#07111dcc",
             padding: {
               left: 8,
               right: 8,
@@ -1189,15 +972,7 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  /*
-   * ==================================================
-   * OBSTACLE HIT
-   * ==================================================
-   */
-
-  onObstacle(
-    obstacle
-  ) {
+  onObstacle(obstacle) {
     if (
       this.finished ||
       this.respawning ||
@@ -1207,15 +982,10 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    if (
-      !obstacle?.active
-    ) {
+    if (!obstacle?.active) {
       return;
     }
 
-    /*
-     * Remove the obstacle immediately.
-     */
     obstacle.disableBody(
       true,
       true
@@ -1224,12 +994,8 @@ export class GameScene extends Phaser.Scene {
     this.lastHitAt =
       this.time.now + 1100;
 
-    this.state.obstaclesHit +=
-      1;
+    this.state.obstaclesHit += 1;
 
-    /*
-     * Lose exactly one life.
-     */
     this.lifeSystem.loseLife();
 
     this.state.lives =
@@ -1242,14 +1008,8 @@ export class GameScene extends Phaser.Scene {
 
     this.player.hit();
 
-    AudioManager.play(
-      'hit'
-    );
+    AudioManager.play("hit");
 
-    /*
-     * ParticleSystem is now a real instance,
-     * so this cannot crash the game loop.
-     */
     this.particles.burst(
       this.player.x,
       this.player.y - 30,
@@ -1257,22 +1017,10 @@ export class GameScene extends Phaser.Scene {
     );
 
     const label =
-      obstacle.getData?.(
-        'type'
-      ) ||
-      'OBSTACLE';
+      obstacle.getData?.("type") ||
+      "OBSTACLE";
 
-    /*
-     * ==================================================
-     * ALL LIVES LOST
-     * ==================================================
-     *
-     * Checkpoint + 4 lives.
-     */
-
-    if (
-      this.state.lives <= 0
-    ) {
+    if (this.state.lives <= 0) {
       this.comic.show(
         `${label} HIT — CHECKPOINT RESTART`,
         900
@@ -1285,14 +1033,6 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    /*
-     * ==================================================
-     * LIVES REMAIN
-     * ==================================================
-     *
-     * SAME POSITION.
-     */
-
     this.comic.show(
       `${label} HIT — ${this.state.lives} LIVES LEFT`,
       900
@@ -1303,12 +1043,6 @@ export class GameScene extends Phaser.Scene {
       this.player.y
     );
   }
-
-  /*
-   * ==================================================
-   * FALL DAMAGE
-   * ==================================================
-   */
 
   takeDamage({
     deathX = this.lastSafeX,
@@ -1333,13 +1067,9 @@ export class GameScene extends Phaser.Scene {
 
     this.player.hit();
 
-    AudioManager.play(
-      'hit'
-    );
+    AudioManager.play("hit");
 
-    if (
-      this.state.lives <= 0
-    ) {
+    if (this.state.lives <= 0) {
       this.respawnAtCheckpoint(
         true
       );
@@ -1347,20 +1077,11 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    /*
-     * A fall uses the last safe ground position.
-     */
     this.respawnAtCurrentPosition(
       deathX,
       deathY
     );
   }
-
-  /*
-   * ==================================================
-   * RESPAWN WITH LIVES REMAINING
-   * ==================================================
-   */
 
   respawnAtCurrentPosition(
     x = this.player.x,
@@ -1373,8 +1094,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.respawning =
-      true;
+    this.respawning = true;
 
     const safeX =
       Phaser.Math.Clamp(
@@ -1400,36 +1120,18 @@ export class GameScene extends Phaser.Scene {
       1500
     );
 
-    this.lastSafeX =
-      safeX;
-
-    this.lastSafeY =
-      safeY;
+    this.lastSafeX = safeX;
+    this.lastSafeY = safeY;
 
     this.updateHud();
 
     this.time.delayedCall(
       180,
       () => {
-        this.respawning =
-          false;
+        this.respawning = false;
       }
     );
   }
-
-  /*
-   * ==================================================
-   * CHECKPOINT RESPAWN
-   * ==================================================
-   *
-   * restoreLives = true:
-   *
-   *     0 lives
-   *       ↓
-   *     checkpoint
-   *       ↓
-   *     4 lives
-   */
 
   respawnAtCheckpoint(
     restoreLives = true
@@ -1441,14 +1143,10 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.respawning =
-      true;
+    this.respawning = true;
 
-    if (
-      restoreLives
-    ) {
+    if (restoreLives) {
       this.lifeSystem.reset();
-
       this.state.restoreLives();
     }
 
@@ -1474,28 +1172,17 @@ export class GameScene extends Phaser.Scene {
       1800
     );
 
-    this.lastSafeX =
-      x;
+    this.lastSafeX = x;
+    this.lastSafeY = y;
 
-    this.lastSafeY =
-      y;
-
-    /*
-     * If Cyber boss mode was active when all lives
-     * were lost, remove the boss and return to the
-     * saved checkpoint.
-     */
     if (
       restoreLives &&
       this.bossMode
     ) {
-      this.bossMode =
-        false;
+      this.bossMode = false;
 
       this.boss?.destroy();
-
-      this.boss =
-        null;
+      this.boss = null;
 
       this.hud.hideBoss();
 
@@ -1510,12 +1197,7 @@ export class GameScene extends Phaser.Scene {
       );
     }
 
-    /*
-     * Remove stale objects far behind the checkpoint.
-     */
-    this.spawner.clearBehind(
-      x
-    );
+    this.spawner.clearBehind(x);
 
     this.cameras.main.stopFollow();
 
@@ -1528,9 +1210,7 @@ export class GameScene extends Phaser.Scene {
       0
     );
 
-    this.spawner.spawnUntil(
-      x
-    );
+    this.spawner.spawnUntil(x);
 
     this.updateHud();
 
@@ -1546,24 +1226,13 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(
       180,
       () => {
-        this.respawning =
-          false;
+        this.respawning = false;
       }
     );
   }
 
-  /*
-   * ==================================================
-   * COIN
-   * ==================================================
-   */
-
-  onCoin(
-    coin
-  ) {
-    if (
-      !coin?.active
-    ) {
+  onCoin(coin) {
+    if (!coin?.active) {
       return;
     }
 
@@ -1572,17 +1241,14 @@ export class GameScene extends Phaser.Scene {
       true
     );
 
-    this.state.coins +=
-      1;
+    this.state.coins += 1;
 
     this.state.score =
       calculateLocalScore(
         this.state
       );
 
-    AudioManager.play(
-      'coin'
-    );
+    AudioManager.play("coin");
 
     this.particles.burst(
       coin.x,
@@ -1591,18 +1257,8 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  /*
-   * ==================================================
-   * POWERUP
-   * ==================================================
-   */
-
-  onPowerup(
-    powerup
-  ) {
-    if (
-      !powerup?.active
-    ) {
+  onPowerup(powerup) {
+    if (!powerup?.active) {
       return;
     }
 
@@ -1614,22 +1270,19 @@ export class GameScene extends Phaser.Scene {
       true
     );
 
-    if (
-      type === 'shield'
-    ) {
+    if (type === "shield") {
       this.player.invulnerableUntil =
         this.time.now + 5000;
 
       this.comic.show(
-        'SHIELD ONLINE — 5 SECONDS',
+        "SHIELD ONLINE — 5 SECONDS",
         900
       );
     } else {
-      this.player.speed +=
-        80;
+      this.player.speed += 80;
 
       this.comic.show(
-        'SPEED BOOST — 5 SECONDS',
+        "SPEED BOOST — 5 SECONDS",
         900
       );
 
@@ -1658,21 +1311,12 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  /*
-   * ==================================================
-   * CYBER BOSS
-   * ==================================================
-   */
-
   startBoss() {
-    if (
-      this.bossMode
-    ) {
+    if (this.bossMode) {
       return;
     }
 
-    this.bossMode =
-      true;
+    this.bossMode = true;
 
     this.player.setX(
       CYBER_BOSS_PLAYER_X
@@ -1680,15 +1324,13 @@ export class GameScene extends Phaser.Scene {
 
     this.player.stop();
 
-    this.boss =
-      new Boss(
-        this,
-        CYBER_BOSS_X,
-        485,
-        () => this.player,
-        () =>
-          this.onBossDefeated()
-      );
+    this.boss = new Boss(
+      this,
+      CYBER_BOSS_X,
+      485,
+      () => this.player,
+      () => this.onBossDefeated()
+    );
 
     this.hud.showBoss(
       this.boss.health,
@@ -1696,7 +1338,7 @@ export class GameScene extends Phaser.Scene {
     );
 
     this.comic.show(
-      'FINAL THREAT DETECTED — CYBER BOSS INCOMING',
+      "FINAL THREAT DETECTED — CYBER BOSS INCOMING",
       1500
     );
   }
@@ -1706,14 +1348,12 @@ export class GameScene extends Phaser.Scene {
       !this.bossMode ||
       !this.boss ||
       this.boss.defeated ||
-      this.attackCooldown >
-        0
+      this.attackCooldown > 0
     ) {
       return;
     }
 
-    this.attackCooldown =
-      260;
+    this.attackCooldown = 260;
 
     const direction =
       this.boss.x >=
@@ -1726,7 +1366,7 @@ export class GameScene extends Phaser.Scene {
         this.player.x +
           direction * 45,
         this.player.y - 40,
-        'tr-boss-shot'
+        "tr-boss-shot"
       );
 
     if (!bullet) {
@@ -1739,7 +1379,7 @@ export class GameScene extends Phaser.Scene {
     );
 
     bullet.setData(
-      'playerBullet',
+      "playerBullet",
       true
     );
 
@@ -1761,7 +1401,7 @@ export class GameScene extends Phaser.Scene {
         if (
           !bullet?.active ||
           !bullet.getData(
-            'playerBullet'
+            "playerBullet"
           )
         ) {
           return;
@@ -1790,12 +1430,8 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  onBossProjectile(
-    projectile
-  ) {
-    if (
-      !projectile?.active
-    ) {
+  onBossProjectile(projectile) {
+    if (!projectile?.active) {
       return;
     }
 
@@ -1807,66 +1443,50 @@ export class GameScene extends Phaser.Scene {
     this.takeDamage({
       deathX:
         this.lastSafeX,
-
       deathY:
         this.lastSafeY,
     });
   }
 
   cleanupProjectiles() {
-    const cleanup =
-      (group) => {
-        group?.children.each(
-          (item) => {
-            if (
-              !item?.active
-            ) {
-              return;
-            }
+    const cleanup = (group) => {
+      group?.children.each(
+        (item) => {
+          if (!item?.active) {
+            return;
+          }
 
-            if (
-              item.x <
-                this.player.x -
-                  1400 ||
-              item.x >
-                this.player.x +
-                  1800 ||
-              item.y <
-                -150 ||
-              item.y >
-                GAME_HEIGHT + 250
-            ) {
-              item.disableBody(
-                true,
-                true
-              );
-            }
-          },
-          this
-        );
-      };
+          if (
+            item.x <
+              this.player.x - 1400 ||
+            item.x >
+              this.player.x + 1800 ||
+            item.y < -150 ||
+            item.y >
+              GAME_HEIGHT + 250
+          ) {
+            item.disableBody(
+              true,
+              true
+            );
+          }
+        },
+        this
+      );
+    };
 
-    cleanup(
-      this.bullets
-    );
-
-    cleanup(
-      this.bossProjectiles
-    );
+    cleanup(this.bullets);
+    cleanup(this.bossProjectiles);
   }
 
   completeRunnerLevel() {
-    if (
-      this.finished
-    ) {
+    if (this.finished) {
       return;
     }
 
-    this.finished =
-      true;
+    this.finished = true;
 
-    this.state.completed =
-      true;
+    this.state.completed = true;
 
     this.state.distance =
       DISTANCE_TARGET;
@@ -1878,9 +1498,7 @@ export class GameScene extends Phaser.Scene {
 
     this.player.stop();
 
-    AudioManager.play(
-      'complete'
-    );
+    AudioManager.play("complete");
 
     this.comic.show(
       `${this.config.name} COMPLETE`,
@@ -1891,7 +1509,7 @@ export class GameScene extends Phaser.Scene {
       500,
       () => {
         this.registry.get(
-          'onLevelComplete'
+          "onLevelComplete"
         )?.(
           this.state.snapshot()
         );
@@ -1900,17 +1518,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   onBossDefeated() {
-    if (
-      this.finished
-    ) {
+    if (this.finished) {
       return;
     }
 
-    this.finished =
-      true;
+    this.finished = true;
 
-    this.state.completed =
-      true;
+    this.state.completed = true;
 
     this.state.bossDefeated =
       true;
@@ -1926,7 +1540,7 @@ export class GameScene extends Phaser.Scene {
     this.hud.hideBoss();
 
     this.comic.show(
-      'BOSS DEFEATED — CYBERSECURITY COMPLETE',
+      "BOSS DEFEATED — CYBERSECURITY COMPLETE",
       1500
     );
 
@@ -1934,7 +1548,7 @@ export class GameScene extends Phaser.Scene {
       900,
       () => {
         this.registry.get(
-          'onLevelComplete'
+          "onLevelComplete"
         )?.(
           this.state.snapshot()
         );
@@ -1959,9 +1573,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   togglePause() {
-    if (
-      this.finished
-    ) {
+    if (this.finished) {
       return;
     }
 
@@ -1971,38 +1583,36 @@ export class GameScene extends Phaser.Scene {
     this.physics.world.isPaused =
       this.paused;
 
-    if (
-      this.paused
-    ) {
+    if (this.paused) {
       this.player.stop();
     }
 
     this.comic.show(
       this.paused
-        ? 'PAUSED'
-        : 'RESUMED',
+        ? "PAUSED"
+        : "RESUMED",
       600
     );
   }
 
   cleanup() {
     window.removeEventListener(
-      'keydown',
+      "keydown",
       this.handleKeyDown
     );
 
     window.removeEventListener(
-      'keyup',
+      "keyup",
       this.handleKeyUp
     );
 
     window.removeEventListener(
-      'blur',
+      "blur",
       this.handleBlur
     );
 
     document.removeEventListener(
-      'visibilitychange',
+      "visibilitychange",
       this.handleBlur
     );
 

@@ -1,7 +1,7 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
-import { AudioManager } from '../core/AudioManager';
-import { WORLD_WIDTH } from '../core/GameConfig';
+import { AudioManager } from "../core/AudioManager";
+import { WORLD_WIDTH } from "../core/GameConfig";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
@@ -11,62 +11,42 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       scene,
       x,
       y,
-      'tr-player-idle'
+      "tr-player-idle"
     );
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
-    this.setOrigin(
-      0.5,
-      1
-    );
+    this.setOrigin(0.5, 1);
 
-    this.setSize(
-      34,
-      62
-    );
+    this.setSize(34, 62);
+    this.setOffset(15, 8);
 
-    this.setOffset(
-      15,
-      8
-    );
+    this.setCollideWorldBounds(false);
 
-    /*
-     * Do not use Phaser world-bound collision for
-     * vertical movement. Otherwise a falling player
-     * can become stuck at the bottom of the world.
-     *
-     * GameScene handles horizontal limits and death.
-     */
-    this.setCollideWorldBounds(
-      false
-    );
+    if (this.body) {
+      this.body.setImmovable(false);
+      this.body.moves = true;
+      this.body.enable = true;
+      this.body.setAllowGravity(true);
+    }
 
     this.setDepth(10);
 
-    /*
-     * Manual movement only.
-     *
-     * A / LEFT  = left
-     * D / RIGHT = right
-     * W / UP / SPACE = jump
-     * S / DOWN = crouch
-     */
-
     this.speed = 300;
 
-    this.jumpVelocity = 570;
+    /*
+     * Increased from 570 to 600.
+     * This allows the player to comfortably reach
+     * the upper platforms.
+     */
+    this.jumpVelocity = 600;
 
     this.animClock = 0;
-
     this.animFrame = 0;
 
     this.invulnerableUntil = 0;
 
-    /*
-     * No acceleration and no horizontal friction.
-     */
     this.setDragX(0);
 
     this.setMaxVelocity(
@@ -75,18 +55,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     if (this.body) {
-      this.body.setAccelerationX(
-        0
-      );
-
-      this.body.setDragX(
-        0
-      );
-
-      this.body.setBounce(
-        0,
-        0
-      );
+      this.body.setAccelerationX(0);
+      this.body.setDragX(0);
+      this.body.setBounce(0, 0);
     }
   }
 
@@ -103,12 +74,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       return;
     }
 
-    const body =
-      this.body;
+    const body = this.body;
 
-    /*
-     * Dynamic max velocity.
-     */
+    body.enable = true;
+    body.moves = true;
+    body.setAllowGravity(true);
+
     this.setMaxVelocity(
       Math.max(
         100,
@@ -117,51 +88,27 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       1000
     );
 
-    /*
-     * Ground detection.
-     */
     const grounded =
       body.blocked.down ||
       body.touching.down ||
       body.onFloor();
 
-    /*
-     * Crouching.
-     */
-    const isCrouching =
-      Boolean(
-        crouch &&
-        grounded
-      );
+    const isCrouching = Boolean(
+      crouch &&
+      grounded
+    );
 
     if (isCrouching) {
-      this.setSize(
-        34,
-        38
-      );
-
-      this.setOffset(
-        15,
-        32
-      );
+      this.setSize(34, 38);
+      this.setOffset(15, 32);
     } else {
-      this.setSize(
-        34,
-        62
-      );
-
-      this.setOffset(
-        15,
-        8
-      );
+      this.setSize(34, 62);
+      this.setOffset(15, 8);
     }
 
     /*
-     * ==================================================
-     * MANUAL HORIZONTAL MOVEMENT
-     * ==================================================
+     * Horizontal movement is completely manual.
      */
-
     if (
       right &&
       !left
@@ -170,9 +117,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.speed
       );
 
-      this.setFlipX(
-        false
-      );
+      this.setFlipX(false);
     } else if (
       left &&
       !right
@@ -181,25 +126,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         -this.speed
       );
 
-      this.setFlipX(
-        true
-      );
+      this.setFlipX(true);
     } else {
-      body.setVelocityX(
-        0
-      );
+      body.setVelocityX(0);
     }
 
-    /*
-     * Always remove acceleration.
-     */
-    body.setAccelerationX(
-      0
-    );
-
-    body.setDragX(
-      0
-    );
+    body.setAccelerationX(0);
+    body.setDragX(0);
 
     /*
      * Horizontal world limits.
@@ -209,32 +142,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       body.velocity.x < 0
     ) {
       this.setX(20);
-
-      body.setVelocityX(
-        0
-      );
+      body.setVelocityX(0);
     }
 
     if (
-      this.x >=
-        WORLD_WIDTH - 20 &&
+      this.x >= WORLD_WIDTH - 20 &&
       body.velocity.x > 0
     ) {
       this.setX(
         WORLD_WIDTH - 20
       );
 
-      body.setVelocityX(
-        0
-      );
+      body.setVelocityX(0);
     }
 
     /*
-     * ==================================================
-     * JUMP
-     * ==================================================
+     * Jump.
      */
-
     if (
       jump &&
       grounded &&
@@ -244,24 +168,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         -this.jumpVelocity
       );
 
-      AudioManager.play(
-        'jump'
-      );
+      AudioManager.play("jump");
     }
 
     /*
-     * ==================================================
-     * RUNNING ANIMATION
-     * ==================================================
+     * Running animation.
      */
-
     this.animClock +=
       this.scene.game.loop.delta;
 
     if (
-      Math.abs(
-        body.velocity.x
-      ) > 30 &&
+      Math.abs(body.velocity.x) > 30 &&
       grounded &&
       !isCrouching &&
       this.animClock >= 80
@@ -269,39 +186,25 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.animClock = 0;
 
       this.animFrame =
-        (
-          this.animFrame + 1
-        ) % 4;
+        (this.animFrame + 1) % 4;
     }
 
-    /*
-     * ==================================================
-     * TEXTURE
-     * ==================================================
-     */
-
     let textureKey =
-      'tr-player-idle';
+      "tr-player-idle";
 
     if (!grounded) {
       textureKey =
         body.velocity.y < 0
-          ? 'tr-player-jump'
-          : 'tr-player-fall';
+          ? "tr-player-jump"
+          : "tr-player-fall";
+    } else if (isCrouching) {
+      textureKey =
+        "tr-player-crouch";
     } else if (
-      isCrouching
+      Math.abs(body.velocity.x) > 30
     ) {
       textureKey =
-        'tr-player-crouch';
-    } else if (
-      Math.abs(
-        body.velocity.x
-      ) > 30
-    ) {
-      textureKey =
-        `tr-player-run-${
-          this.animFrame + 1
-        }`;
+        `tr-player-run-${this.animFrame + 1}`;
     }
 
     if (
@@ -314,11 +217,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     /*
-     * ==================================================
-     * INVULNERABILITY FLASH
-     * ==================================================
+     * Hit/invulnerability flash.
      */
-
     if (
       this.scene.time.now <
       this.invulnerableUntil
@@ -326,8 +226,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.setAlpha(
         0.55 +
           Math.sin(
-            this.scene.time.now /
-              55
+            this.scene.time.now / 55
           ) *
             0.35
       );
@@ -337,9 +236,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   hit() {
-    if (
-      !this.active
-    ) {
+    if (!this.active) {
       return false;
     }
 
@@ -351,21 +248,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     this.invulnerableUntil =
-      this.scene.time.now +
-      1100;
+      this.scene.time.now + 1100;
 
     this.setTexture(
-      'tr-player-hit'
+      "tr-player-hit"
     );
 
     if (this.body) {
-      this.body.setVelocityX(
-        0
-      );
-
-      this.body.setAccelerationX(
-        0
-      );
+      this.body.setVelocityX(0);
+      this.body.setAccelerationX(0);
     }
 
     return true;
@@ -376,22 +267,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     y,
     invulnerabilityMs = 1200
   ) {
-    if (
-      !this.active
-    ) {
+    if (!this.active) {
       return;
     }
 
-    this.setPosition(
-      x,
-      y
-    );
+    this.setPosition(x, y);
 
     if (this.body) {
-      this.body.reset(
-        x,
-        y
-      );
+      this.body.reset(x, y);
 
       this.body.setVelocity(
         0,
@@ -403,9 +286,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         0
       );
 
-      this.body.setDragX(
-        0
-      );
+      this.body.setDragX(0);
 
       this.body.setBounce(
         0,
@@ -420,18 +301,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       invulnerabilityMs;
 
     this.animClock = 0;
-
     this.animFrame = 0;
 
     this.setTexture(
-      'tr-player-idle'
+      "tr-player-idle"
     );
   }
 
   stop() {
-    if (
-      !this.body
-    ) {
+    if (!this.body) {
       return;
     }
 
@@ -445,15 +323,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       0
     );
 
-    this.body.setDragX(
-      0
-    );
+    this.body.setDragX(0);
   }
 
   static createTextures(scene) {
     if (
       scene.textures.exists(
-        'tr-player-idle'
+        "tr-player-idle"
       )
     ) {
       return;
@@ -516,7 +392,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     };
 
     pose(
-      'tr-player-idle',
+      "tr-player-idle",
       [
         [32, 34, 19, 45],
         [32, 34, 45, 45],
@@ -528,7 +404,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-run-1',
+      "tr-player-run-1",
       [
         [32, 34, 22, 46],
         [32, 34, 46, 26],
@@ -540,7 +416,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-run-2',
+      "tr-player-run-2",
       [
         [32, 34, 20, 54],
         [32, 34, 45, 44],
@@ -552,7 +428,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-run-3',
+      "tr-player-run-3",
       [
         [32, 34, 42, 46],
         [32, 34, 22, 26],
@@ -564,7 +440,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-run-4',
+      "tr-player-run-4",
       [
         [32, 34, 46, 54],
         [32, 34, 20, 44],
@@ -576,7 +452,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-jump',
+      "tr-player-jump",
       [
         [32, 33, 20, 24],
         [32, 33, 42, 22],
@@ -588,7 +464,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-fall',
+      "tr-player-fall",
       [
         [32, 35, 22, 20],
         [32, 35, 42, 20],
@@ -600,7 +476,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-crouch',
+      "tr-player-crouch",
       [
         [32, 32, 22, 42],
         [32, 32, 42, 42],
@@ -613,7 +489,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     pose(
-      'tr-player-hit',
+      "tr-player-hit",
       [
         [32, 35, 18, 48],
         [32, 35, 46, 48],
