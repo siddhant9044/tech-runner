@@ -1,6 +1,3 @@
-/* .game-page{position:fixed;inset:0;background:#020913;color:#eef7ff;display:flex;flex-direction:column;overflow:hidden}.game-top{height:34px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 18px;background:#040e19;border-bottom:1px solid #1b82c5;font:700 11px/1 Arial;letter-spacing:.2em}.phaser-host{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;touch-action:none}.phaser-host canvas{display:block;max-width:100%;max-height:calc(100vh - 34px);touch-action:none}.game-modal{position:absolute;inset:34px 0 0;background:rgba(2,8,14,.74);display:grid;place-items:center;padding:20px;z-index:100}.modal-card{width:min(620px,94vw);padding:30px;background:#07131f;border:1px solid #2aa8ef;box-shadow:0 20px 80px rgba(0,0,0,.5);text-align:center}.modal-card h2{margin:4px 0 24px;font:800 clamp(26px,4vw,44px)/1 Arial;letter-spacing:.08em}.modal-card p{color:#a9c5d8}.eyebrow{color:#49c7ff;font:700 12px/1 Arial;letter-spacing:.24em}.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 24px}.stat-grid span{padding:13px;background:#0b1c2b;border:1px solid #173d58;color:#87a7bd;font-size:12px}.stat-grid b{display:block;color:#f4f7fa;font-size:18px;margin-top:5px}.modal-card button{border:1px solid #ff4354;background:#8c1825;color:#fff;padding:13px 20px;font-weight:800;letter-spacing:.12em;cursor:pointer}.button-row{display:flex;gap:10px;justify-content:center}.secondary{background:#102235!important;border-color:#2b6f9c!important}@media(max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr)}.game-top{height:28px;font-size:9px}.game-modal{inset:28px 0 0}.modal-card{padding:22px}.modal-card h2{margin-bottom:16px}}
-@media(orientation:portrait) and (max-width:900px){.phaser-host:after{content:'PLEASE ROTATE YOUR DEVICE';position:absolute;inset:28px 0 0;display:grid;place-items:center;background:#020913;color:#fff;font:800 22px Arial;letter-spacing:.12em;text-align:center;z-index:90}} */
-
 /* =========================================================
    TECH RUNNER GAME PAGE
 ========================================================= */
@@ -11,11 +8,9 @@
   inset: 0;
 
   width: 100%;
-
   height: 100%;
 
   min-width: 0;
-
   min-height: 0;
 
   background: #020913;
@@ -30,10 +25,6 @@
 
   isolation: isolate;
 
-  /*
-   * Prevent mobile browsers from interpreting
-   * game gestures as page gestures.
-   */
   touch-action: none;
 
   user-select: none;
@@ -44,7 +35,7 @@
 }
 
 /* =========================================================
-   TOP BAR
+   GAME TOP BAR
 ========================================================= */
 
 .game-top {
@@ -71,7 +62,8 @@
   border-bottom:
     1px solid #1b82c5;
 
-  color: #7bb6d2;
+  color:
+    #7bb6d2;
 
   font:
     700 10px/1
@@ -87,25 +79,34 @@
 }
 
 .game-top span:nth-child(2) {
-  color: #dcebf4;
+  color:
+    #dcebf4;
 
-  text-align: center;
+  text-align:
+    center;
 
-  overflow: hidden;
+  overflow:
+    hidden;
 
-  text-overflow: ellipsis;
+  text-overflow:
+    ellipsis;
 
-  white-space: nowrap;
+  white-space:
+    nowrap;
 
-  max-width: 55%;
+  max-width:
+    55%;
 }
 
 .game-orientation {
-  color: #3ec8ff;
+  color:
+    #3ec8ff;
 
-  font-size: 8px;
+  font-size:
+    8px;
 
-  white-space: nowrap;
+  white-space:
+    nowrap;
 }
 
 /* =========================================================
@@ -118,74 +119,171 @@
   flex:
     1 1 auto;
 
-  width: 100%;
+  width:
+    100%;
 
-  min-width: 0;
+  min-width:
+    0;
 
-  min-height: 0;
+  min-height:
+    0;
 
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: center;
+  justify-content:
+    center;
 
-  overflow: hidden;
+  overflow:
+    hidden;
 
-  background: #020913;
+  background:
+    #020913;
 
-  touch-action: none;
+  touch-action:
+    none;
 
-  /*
-   * Prevent browser scrolling while touching
-   * Phaser controls.
-   */
-  overscroll-behavior: none;
-}
-
-/*
- * Phaser creates the canvas dynamically.
- */
-
-.phaser-host canvas {
-  display: block;
+  overscroll-behavior:
+    none;
 
   /*
-   * Phaser Scale.FIT calculates the actual
-   * displayed size. These limits ensure the
-   * canvas can never exceed its host.
+   * Do not add browser zoom or transform here.
+   *
+   * Phaser Scale.FIT owns the canvas dimensions.
    */
-  width: auto;
-
-  height: auto;
-
-  max-width: 100%;
-
-  max-height: 100%;
-
-  touch-action: none;
-
-  user-select: none;
-
-  -webkit-user-select: none;
-
-  -webkit-touch-callout: none;
 }
 
 /* =========================================================
-   PORTRAIT ROTATE SCREEN
+   PHASER CANVAS
+========================================================= */
+
+.phaser-host canvas {
+  /*
+   * IMPORTANT:
+   *
+   * Phaser Scale.FIT calculates the correct CSS width
+   * and height.
+   *
+   * Do NOT override it with max-width / max-height.
+   */
+
+  display:
+    block;
+
+  margin:
+    0;
+
+  padding:
+    0;
+
+  touch-action:
+    none;
+
+  user-select:
+    none;
+
+  -webkit-user-select:
+    none;
+
+  -webkit-touch-callout:
+    none;
+
+  /*
+   * Prevent inline-element baseline spacing.
+   */
+
+  vertical-align:
+    top;
+}
+
+/* =========================================================
+   MOBILE EXPANDED VIEW
+========================================================= */
+
+/*
+ * This is NOT browser fullscreen.
+ *
+ * It does not call:
+ *
+ *     document.documentElement.requestFullscreen()
+ *
+ * Therefore Android Chrome does not display its native
+ * fullscreen notification.
+ */
+
+.app-shell.game-view-expanded
+  .game-page {
+  z-index:
+    300;
+
+  /*
+   * Keep the game fixed to the viewport.
+   */
+
+  inset:
+    0;
+
+  width:
+    100vw;
+
+  height:
+    100dvh;
+}
+
+.app-shell.game-view-expanded
+  .phaser-host {
+  /*
+   * Give Phaser the maximum available game area.
+   */
+
+  width:
+    100vw;
+
+  height:
+    100%;
+
+  min-width:
+    0;
+
+  min-height:
+    0;
+}
+
+/*
+ * Keep the application header visible.
+ *
+ * The game remains underneath it, exactly like the
+ * existing Tech Runner visual hierarchy.
+ */
+
+.app-shell.game-view-expanded
+  .nav {
+  z-index:
+    350;
+}
+
+/* =========================================================
+   ROTATE SCREEN
 ========================================================= */
 
 .rotate-screen {
-  position: fixed;
+  position:
+    fixed;
 
-  inset: 0;
+  inset:
+    0;
 
-  z-index: 500;
+  z-index:
+    500;
 
-  display: grid;
+  display:
+    grid;
 
-  place-items: center;
+  place-items:
+    center;
 
   padding:
     20px;
@@ -197,9 +295,11 @@
       #020913 58%
     );
 
-  color: #eef7ff;
+  color:
+    #eef7ff;
 
-  touch-action: none;
+  touch-action:
+    none;
 }
 
 .rotate-card {
@@ -212,7 +312,8 @@
   padding:
     28px 22px;
 
-  text-align: center;
+  text-align:
+    center;
 
   background:
     rgba(
@@ -236,16 +337,20 @@
 }
 
 .rotate-eyebrow {
-  color: #43caff;
+  color:
+    #43caff;
 
-  font-size: 9px;
+  font-size:
+    9px;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
   letter-spacing:
     0.25em;
 
-  margin-bottom: 9px;
+  margin-bottom:
+    9px;
 }
 
 .rotate-card h1 {
@@ -259,7 +364,8 @@
       37px
     );
 
-  line-height: 1;
+  line-height:
+    1;
 
   letter-spacing:
     0.03em;
@@ -269,57 +375,75 @@
   margin:
     0 auto;
 
-  max-width: 330px;
+  max-width:
+    330px;
 
-  color: #8baabd;
+  color:
+    #8baabd;
 
-  font-size: 12px;
+  font-size:
+    12px;
 
-  line-height: 1.55;
+  line-height:
+    1.55;
 }
 
 /* =========================================================
-   ROTATE VISUAL
+   ROTATE PREVIEW
 ========================================================= */
 
 .rotate-preview {
-  min-height: 120px;
+  min-height:
+    120px;
 
   margin:
     22px 0;
 
-  display: flex;
+  display:
+    flex;
 
-  justify-content: center;
+  justify-content:
+    center;
 
-  align-items: center;
+  align-items:
+    center;
 
-  gap: 18px;
+  gap:
+    18px;
 }
 
 .phone {
-  width: 58px;
+  width:
+    58px;
 
-  height: 102px;
+  height:
+    102px;
 
   border:
     2px solid #4fcfff;
 
-  border-radius: 9px;
+  border-radius:
+    9px;
 
-  padding: 5px;
+  padding:
+    5px;
 
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: center;
+  justify-content:
+    center;
 
   transform:
     rotate(0deg);
 
   transition:
-    transform 0.4s ease;
+    transform
+    0.4s
+    ease;
 
   box-shadow:
     0 0 20px
@@ -332,52 +456,68 @@
 }
 
 .landscape-phone {
-  width: 102px;
+  width:
+    102px;
 
-  height: 58px;
+  height:
+    58px;
 
   border-color:
     #ff4657;
 }
 
 .phone-screen {
-  width: 100%;
+  width:
+    100%;
 
-  height: 100%;
+  height:
+    100%;
 
-  display: grid;
+  display:
+    grid;
 
-  place-items: center;
+  place-items:
+    center;
 
   background:
     #071a28;
 
-  color: #45c9ff;
+  color:
+    #45c9ff;
 
-  font-size: 6px;
+  font-size:
+    6px;
 
-  font-weight: 900;
+  font-weight:
+    900;
 
   letter-spacing:
     0.08em;
 
-  line-height: 1.3;
+  line-height:
+    1.3;
 
-  text-align: center;
+  text-align:
+    center;
 }
 
 .rotate-arrow {
-  color: #ff4657;
+  color:
+    #ff4657;
 
-  font-size: 31px;
+  font-size:
+    31px;
 
-  font-weight: 900;
+  font-weight:
+    900;
 }
 
 .rotate-card > small {
-  color: #5e899e;
+  color:
+    #5e899e;
 
-  font-size: 7px;
+  font-size:
+    7px;
 
   letter-spacing:
     0.18em;
@@ -388,15 +528,20 @@
 ========================================================= */
 
 .game-modal {
-  position: fixed;
+  position:
+    fixed;
 
-  inset: 34px 0 0;
+  inset:
+    34px 0 0;
 
-  z-index: 400;
+  z-index:
+    400;
 
-  display: grid;
+  display:
+    grid;
 
-  place-items: center;
+  place-items:
+    center;
 
   padding:
     20px;
@@ -409,9 +554,11 @@
       0.78
     );
 
-  overflow-y: auto;
+  overflow-y:
+    auto;
 
-  touch-action: auto;
+  touch-action:
+    auto;
 }
 
 .modal-card {
@@ -426,7 +573,8 @@
       100dvh - 75px
     );
 
-  overflow-y: auto;
+  overflow-y:
+    auto;
 
   padding:
     30px;
@@ -446,7 +594,8 @@
       0.5
     );
 
-  text-align: center;
+  text-align:
+    center;
 
   user-select:
     text;
@@ -474,16 +623,19 @@
 }
 
 .modal-card p {
-  color: #a9c5d8;
+  color:
+    #a9c5d8;
 
-  line-height: 1.55;
+  line-height:
+    1.55;
 
   overflow-wrap:
     anywhere;
 }
 
 .eyebrow {
-  color: #49c7ff;
+  color:
+    #49c7ff;
 
   font:
     700
@@ -500,22 +652,28 @@
 ========================================================= */
 
 .stat-grid {
-  display: grid;
+  display:
+    grid;
 
   grid-template-columns:
     repeat(
       3,
-      minmax(0, 1fr)
+      minmax(
+        0,
+        1fr
+      )
     );
 
-  gap: 10px;
+  gap:
+    10px;
 
   margin:
     0 0 24px;
 }
 
 .stat-grid span {
-  min-width: 0;
+  min-width:
+    0;
 
   padding:
     13px;
@@ -526,19 +684,25 @@
   border:
     1px solid #173d58;
 
-  color: #87a7bd;
+  color:
+    #87a7bd;
 
-  font-size: 12px;
+  font-size:
+    12px;
 }
 
 .stat-grid b {
-  display: block;
+  display:
+    block;
 
-  color: #f4f7fa;
+  color:
+    #f4f7fa;
 
-  font-size: 18px;
+  font-size:
+    18px;
 
-  margin-top: 5px;
+  margin-top:
+    5px;
 
   overflow-wrap:
     anywhere;
@@ -549,7 +713,8 @@
 ========================================================= */
 
 .modal-card button {
-  min-height: 46px;
+  min-height:
+    46px;
 
   border:
     1px solid #ff4354;
@@ -557,17 +722,20 @@
   background:
     #8c1825;
 
-  color: #fff;
+  color:
+    #fff;
 
   padding:
     12px 20px;
 
-  font-weight: 800;
+  font-weight:
+    800;
 
   letter-spacing:
     0.12em;
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
   touch-action:
     manipulation;
@@ -584,9 +752,11 @@
 }
 
 .button-row {
-  display: flex;
+  display:
+    flex;
 
-  gap: 10px;
+  gap:
+    10px;
 
   justify-content:
     center;
@@ -605,25 +775,32 @@
 ========================================================= */
 
 @media (
-  orientation: landscape
+  orientation:
+    landscape
 ) and (
-  max-height: 500px
+  max-height:
+    500px
 ) {
   .game-top {
-    height: 25px;
+    height:
+      25px;
 
-    min-height: 25px;
+    min-height:
+      25px;
 
-    flex-basis: 25px;
+    flex-basis:
+      25px;
 
     padding:
       0 10px;
 
-    font-size: 8px;
+    font-size:
+      8px;
   }
 
   .game-orientation {
-    display: none;
+    display:
+      none;
   }
 
   .game-modal {
@@ -646,7 +823,8 @@
   }
 
   .modal-card h2 {
-    margin-bottom: 13px;
+    margin-bottom:
+      13px;
 
     font-size:
       clamp(
@@ -660,26 +838,32 @@
     margin-bottom:
       14px;
 
-    gap: 7px;
+    gap:
+      7px;
   }
 
   .stat-grid span {
-    padding: 8px;
+    padding:
+      8px;
 
-    font-size: 9px;
+    font-size:
+      9px;
   }
 
   .stat-grid b {
-    font-size: 14px;
+    font-size:
+      14px;
   }
 
   .modal-card button {
-    min-height: 40px;
+    min-height:
+      40px;
 
     padding:
       9px 14px;
 
-    font-size: 9px;
+    font-size:
+      9px;
   }
 }
 
@@ -687,36 +871,40 @@
    PORTRAIT
 ========================================================= */
 
-@media (orientation: portrait) {
+@media (
+  orientation:
+    portrait
+) {
   .game-top {
-    height: 30px;
+    height:
+      30px;
 
-    min-height: 30px;
+    min-height:
+      30px;
 
-    flex-basis: 30px;
+    flex-basis:
+      30px;
 
     padding:
       0 10px;
 
-    font-size: 8px;
+    font-size:
+      8px;
   }
 
   .game-orientation {
-    display: none;
+    display:
+      none;
   }
 
   .phaser-host canvas {
     /*
-     * Phaser is covered by the rotate screen,
-     * but these rules prevent accidental
-     * oversized canvas layout.
+     * No max-width / max-height here.
+     *
+     * Phaser controls its own dimensions.
      */
-    max-width: 100%;
-
-    max-height:
-      calc(
-        100dvh - 30px
-      );
+    display:
+      block;
   }
 
   .game-modal {
@@ -728,7 +916,8 @@
   }
 
   .modal-card {
-    width: 100%;
+    width:
+      100%;
 
     max-height:
       calc(
@@ -755,21 +944,27 @@
     grid-template-columns:
       repeat(
         2,
-        minmax(0, 1fr)
+        minmax(
+          0,
+          1fr
+        )
       );
 
-    gap: 7px;
+    gap:
+      7px;
   }
 
   .stat-grid span {
     padding:
       10px 8px;
 
-    font-size: 10px;
+    font-size:
+      10px;
   }
 
   .stat-grid b {
-    font-size: 15px;
+    font-size:
+      15px;
   }
 
   .button-row {
@@ -779,7 +974,8 @@
 
   .button-row button,
   .modal-card > button {
-    width: 100%;
+    width:
+      100%;
   }
 }
 
@@ -788,9 +984,11 @@
 ========================================================= */
 
 @media (
-  orientation: portrait
+  orientation:
+    portrait
 ) and (
-  max-width: 390px
+  max-width:
+    390px
 ) {
   .rotate-card {
     padding:
@@ -798,34 +996,42 @@
   }
 
   .rotate-preview {
-    gap: 11px;
+    gap:
+      11px;
 
     margin:
       17px 0;
   }
 
   .rotate-card h1 {
-    font-size: 24px;
+    font-size:
+      24px;
   }
 
   .rotate-card p {
-    font-size: 11px;
+    font-size:
+      11px;
   }
 
   .phone {
-    width: 49px;
+    width:
+      49px;
 
-    height: 86px;
+    height:
+      86px;
   }
 
   .landscape-phone {
-    width: 86px;
+    width:
+      86px;
 
-    height: 49px;
+    height:
+      49px;
   }
 
   .rotate-arrow {
-    font-size: 26px;
+    font-size:
+      26px;
   }
 }
 
@@ -833,8 +1039,12 @@
    ACCESSIBILITY
 ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+@media (
+  prefers-reduced-motion:
+    reduce
+) {
   .phone {
-    transition: none;
+    transition:
+      none;
   }
 }
